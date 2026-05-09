@@ -36,7 +36,6 @@ base::table(ks <- se$Cluster)
 ```
 
 ```{r fig.width=10, fig.height=3.5}
-# TODO: y-axis not reversed; fix in plotLabel?
 is <- labelNames(sd)
 ps <- lapply(is, \(i) 
     plotSpatialData() + 
@@ -48,12 +47,12 @@ wrap_plots(ps, nrow=1, guides="collect")
 ```
 
 ```{r}
-sp <- query(sd, "table", grepl("Tc", Cluster))
+sp <- query(sd, i="table", grepl("Tc", Cluster))
 base::table(table(sp)$Cluster)
 ```
 
 ```{r fig.width=10, fig.height=3.5}
-# TODO: this is wrong?
+# TODO: this is wrong!
 is <- labelNames(sd)
 ps <- lapply(is, \(i) 
     plotSpatialData() + 
