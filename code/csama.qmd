@@ -298,24 +298,65 @@ library(sosta)
 library(spatstat.geom)
 ```
 
+We'll start by construction a point pattern process (`ppp`) of 
+cell centroid coordinates, using cluster assignments as `marks`:
+
 ```{r sosta-ppp, warning=FALSE}
 xy <- centroids(SpatialData::transform(shape(sd)))
 ow <- owin(xrange=range(xy[, 1]), yrange=range(xy[, 2]))
 pp <- ppp(x=xy[, 1], y=xy[, 2], window=ow, marks=se$clusters)
 ```
 
-For now the `sosta` output is not yet stored in the object; we'll plot it 
-using `geom_sf()`. For illustration, we'll highlight the largest regions:
+We can now use cellular density (more precisely, the `ppp`'s intensity)
+to identify multi-cellular anatomical substructures using `sosta`;
+we'll then assign these to our object as a new `shape` element:
 
 ```{r sosta-roi, message=FALSE}
-roi <- reconstructShapeDensity(pp, markSelect=8, dim=400)
-roj <- roi[head(order(st_area(roi), decreasing=TRUE), n=20), ]
+roi <- reconstructShapeDensity(pp, markSelect=6, dim=400)
+st_geometry(roi) <- "geometry"
+roi <- SpatialDataShape(roi)
+shape(sd, "roi") <- roi
+```
 
+```{r sosta-plt, message=FALSE}
 plotSpatialData() + 
     plotShape(sd, col=NA, fill="clusters") + 
-    geom_sf(data=roj, col="red", fill=NA, linewidth=1) +
+    plotShape(sd, "roi", col="red", fill=NA, linewidth=1) +
     scale_fill_manual(values=hcl.colors(nk, "Spectral")) 
 ```
+
+Next, we can use regions to aggregate cell-level measurements into 
+pseudo-bulks using `mask()`; here, `how` specifies how to do that:
+
+```{r}
+sd <- mask(sd, i="cell_boundaries", j="roi", how="sum")
+(pb <- element(sd, "cell_boundaries_by_roi"))
+```
+
+```{r}
+pb <- normalizeRnaCounts.se(pb, 
+    log=FALSE, 
+    assay.type="sum",
+    output.name="normcounts")
+pc <- runPca(assay(pb, "normcounts"))
+```
+
+```{r}
+# top-loaded features for PCs 1-3
+apply(pc$rotation[, 1:3], 2, \(.) head(names(sort(abs(.), decreasing=TRUE)), 10))
+```
+
+```{r}
+# visualize top-loaded feature for 1st PC
+plotSpatialData() + 
+    plotShape(sd, col=NA, fill="XBP1", assay="logcounts") +
+    scale_fill_gradientn(colors=rev(hcl.colors(9, "Roma")))
+```
+
+AI tells us *"X-box binding protein 1 (XBP1) is a key transcription factor, 
+activated by the IRE1/XBP1 branch of the Unfolded Protein Response (UPR), 
+which promotes breast cancer development, progression, and resistance to 
+therapy."*; so let's believe that and be proud.
 
 ### appendix
 
