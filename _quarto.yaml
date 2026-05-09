@@ -5,6 +5,7 @@ execute:
 
 project:
   type: website
+  output-dir: docs
   execute-dir: project
   render: 
     - code/index.qmd
@@ -15,10 +16,9 @@ format:
     toc: true
     toc-depth: 4
     code-fold: false
-    output-dir: docs
     standalone: true
     embed-resources: true
-    bibliography: code/_.bib
+    bibliography: _.bib
 
 website:
   title: "SpatialData"

@@ -1,5 +1,9 @@
 ## VisiumHD
 
+```{r echo=FALSE}
+knitr::opts_chunk(eval=FALSE)
+```
+
 ### preamble
 
 ```{r load-libs}
