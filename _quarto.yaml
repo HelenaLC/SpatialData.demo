@@ -7,27 +7,28 @@ project:
   type: website
   execute-dir: project
   render: 
-    - docs/index.qmd
-    - docs/*.qmd
+    - code/index.qmd
+    - code/*.qmd
 
 format:
   html:
     toc: true
     toc-depth: 4
     code-fold: false
+    output-dir: docs
     standalone: true
     embed-resources: true
-    bibliography: docs/_.bib
+    bibliography: code/_.bib
 
 website:
   title: "SpatialData"
   navbar:
     left:
-      - docs/csama.qmd
-      - docs/merfish.qmd
-      - docs/mibitof.qmd
-      - docs/mcmicro.qmd
-      - docs/cosmx.qmd
-      - docs/xenium.qmd
-      - docs/visium.qmd
-      - docs/visiumhd.qmd
+      - code/csama.qmd
+      - code/merfish.qmd
+      - code/mibitof.qmd
+      - code/mcmicro.qmd
+      - code/cosmx.qmd
+      - code/xenium.qmd
+      - code/visium.qmd
+      - code/visiumhd.qmd
