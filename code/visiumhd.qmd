@@ -14,18 +14,15 @@ library(SingleCellExperiment)
 ```
 
 ```{r load-data}
-(sd <- MouseIntestineVisHD())
-```
-
-### analysis
-
-```{r}
-# simplify element identifiers
+# load & simplify naming
+sd <- MouseIntestineVisHD()
 pat <- "Visium_HD_Mouse_Small_Intestine_"
 imageNames(sd) <- gsub(pat, "", imageNames(sd))
 shapeNames(sd) <- gsub(pat, "bin_", shapeNames(sd))
 sd
 ```
+
+### analysis
 
 ```{r}
 # low-resolution image & shape
