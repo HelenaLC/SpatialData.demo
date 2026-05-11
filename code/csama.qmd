@@ -243,16 +243,20 @@ wrap_plots(ps, nrow=2) & theme_void() & theme(plot.title=element_text(hjust=0.5)
 ```
 
 We can also zoom in further to inspect how well cell segmentation boundaries 
-align with the immunofluorescence signals used to infer them:
+align with histopathology and the immunofluorescence signals used to get them:
 
-```{r eval=FALSE}
+```{r plt-if-seg, fig.width=11, fig.height=6}
 bb <- list(
-    xmin=15e3, xmax=16e3,
-    ymin=44e3, ymax=45e3)
+    xmin=15e3, xmax=17e3,
+    ymin=42e3, ymax=45e3)
 sq <- crop(sd, bb)
-plotSpatialData() +
+plotSpatialData() + 
+    plotImage(sq, 1) +
+    plotShape(sq, fill=NA, col="black", linewidth=1/5) +
+plotSpatialData() + 
     plotImage(sq, 2, ch=chs, c=pal[chs]) +
-    plotShape(sq, fill=NA, col="white", linewidth=1)
+    plotShape(sq, fill=NA, col="white", linewidth=1/5) +
+plot_layout() 
 ```
 
 ### processing
