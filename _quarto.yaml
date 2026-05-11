@@ -1,5 +1,6 @@
 execute: 
   cache: false
+  freeze: false
   message: false
   warning: false
 
@@ -18,7 +19,7 @@ format:
     code-fold: false
     standalone: true
     embed-resources: true
-    bibliography: _.bib
+    bibliography: code/_.bib
 
 website:
   title: "SpatialData"

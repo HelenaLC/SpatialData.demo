@@ -15,10 +15,13 @@ We'll first retrieve the compressed *.zarr* store programatically,
 decompress it, and stash the data's on-disk file path for later:
 
 ```{r load-zarr}
-# retrieve .zarr store from the web
-url <- "https://zenodo.org/records/20083116/files/BC_xenium_sdata_lowres.zarr.zip?download=1"
+# retrieve .zarr
+url <- file.path(
+    "https://zenodo.org/records/20120907/files",
+    "BC_xenium_sdata_AL_LR.zarr.zip?download=1")
 zip <- tempfile("sd", fileext=".zarr.zip")
 download.file(url, zip, quiet=TRUE)
+
 # decompress, stash & view contents
 nm <- unzip(zip, exdir=dirname(zip))
 zs <- grepv("zarr$", dirname(nm))
@@ -67,59 +70,88 @@ pip install segtraq
 # path to conda binary
 bin <- "~/software/mambaforge/bin/conda" 
 options(reticulate.conda_binary=bin)
+
 # activate environment
 use_condaenv("segtraq")
 ```
 
+```{python py-opt, echo=FALSE}
+import joblib
+import logging
+import warnings
+
+warnings.filterwarnings("ignore")
+joblib.parallel.DEFAULT_BACKEND = "threading"
+
+logging.getLogger("spatialdata").propagate = False
+logging.getLogger("spatialdata").setLevel(logging.ERROR)
+
+logging.getLogger("spatialdata_plot").propagate = False
+logging.getLogger("spatialdata_plot").setLevel(logging.ERROR)
+```
+
 ### segmentation
 
-```{python, eval=FALSE}
-import warnings
-warnings.filterwarnings(action="ignore")
-
-import anndata as ad
-import matplotlib.pyplot as plt
-import segtraq
+```{python segtraq-load}
 import spatialdata as sd
-import spatialdata_plot
-
 sdata = sd.read_zarr(r.zs)
+sdata
+```
+
+```{python segtraq-calc}
+import segtraq
 
 sdata.shapes["cell_boundaries"].index.name = "cell_id"
 sdata.shapes["nucleus_boundaries"].index.name = "cell_id"
 
 st = segtraq.SegTraQ(sdata,
-    images_key="morphology_focus", 
-    tables_centroid_x_key=None, 
-    tables_centroid_y_key=None)
-    
+    tables_centroid_x_key=None,
+    tables_centroid_y_key=None,
+    images_key="morphology_focus")
+
 st.run_baseline()
 
 adata = st.sdata.tables["table"]
 adata
 ```
 
-```{python, eval=FALSE}
-axes = plt.subplots(1, 3, figsize=(14, 5), constrained_layout=True)[1].flatten()
+```{python segtraq-plot}
+#| code-fold: true
+import spatialdata_plot
+import matplotlib.pyplot as plt
 
-# plot DAPI image
-a = st.sdata.pl.render_images("morphology_focus", channel="DAPI")
-a.pl.show(ax=axes[0], title="DAPI", coordinate_systems="global")
+fg, ax = plt.subplots(1, 3, figsize=(14, 4), constrained_layout=True)
+fg.subplots_adjust(wspace=0.5)
+ax = ax.flatten()
 
-# plot histology
-b = st.sdata.pl.render_images("he_image")
-b.pl.show(ax=axes[1], title="H&E", coordinate_systems="global")
+# plot histopathology
+st.sdata.pl.render_images(
+    "he_image"
+).pl.show(
+    ax=ax[0], 
+    title="H&E")
 
-# plot overlay of nuclei & cell boundaries colored by cell area
-c = st.sdata.pl.render_shapes(
-    element="nucleus_boundaries",
-    outline_color="black")
-c = c.pl.render_shapes(
+# plot cell boundaries
+st.sdata.pl.render_shapes(
     element="cell_boundaries",
-    outline_color="black")
-c.pl.show(ax=axes[2], title="overlay", colorbar=True)
+    color="transcript_counts",
+    method="matplotlib"
+).pl.show(
+    ax=ax[1], 
+    colorbar=True,
+    title="Tx counts")
+    
+# plot immunofluorescence
+st.sdata.pl.render_images(
+    "morphology_focus", 
+    channel="DAPI"
+).pl.show(
+    ax=ax[2], 
+    title="DAPI")
+```
 
-plt.show()
+```{r echo=FALSE}
+knitr::opts_chunk$set(eval=TRUE)
 ```
 
 ### exploratory
@@ -130,11 +162,20 @@ segmentation boundaries using `setTable()`; `ik` specifies the `spatialdata`'s
 `instance_key` used to link observations between `table` and spatial element.
 
 ```{r}
-sd <- readSpatialData(zs)#, tables=FALSE)
-# sd <- setTable(sd, 
-#     i="cell_boundaries", ik="cell_id",
-#     y=py$adata$as_SingleCellExperiment())
-sd
+# intentionally skip reading table layer; 
+# we'll get it from Python with 'anndataR'
+sd <- readSpatialData(zs, tables=FALSE)
+
+# bug? shapes are missing this...
+shape(sd) <- mutate(shape(sd), cell_id=`__index_level_0__`)
+shape(sd)@meta$spatialdata_attrs$instance_key <- "cell_id"
+
+# set Python table to annotate 
+# cell segmentation boundaries
+se <- py$adata$as_SingleCellExperiment()
+(sd <- setTable(sd, y=se, 
+    i="cell_boundaries", 
+    ik="cell_id"))
 ```
 
 #### histopathology
@@ -155,8 +196,8 @@ we subset the object to contain only images before cropping:
 
 ```{r plt-he-box}
 bb <- list(
-    xmin=2000, xmax=4000, 
-    ymin=2000, ymax=3000)
+    xmin=15e3, xmax=18e3, 
+    ymin=44e3, ymax=46e3)
 sp <- crop(sd["images", ], bb)
 plotSpatialData() + plotImage(sp) 
 ```
@@ -205,10 +246,13 @@ We can also zoom in further to inspect how well cell segmentation boundaries
 align with the immunofluorescence signals used to infer them:
 
 ```{r eval=FALSE}
-# sq <- crop(sd, list(xmin=2500, xmax=3000, ymin=2000, ymax=2500))
-# plotSpatialData() +
-#     plotImage(sq, 2, ch=chs, c=pal[chs]) +
-#     plotShape(sq, fill=NA, col="white", linewidth=1)
+bb <- list(
+    xmin=15e3, xmax=16e3,
+    ymin=44e3, ymax=45e3)
+sq <- crop(sd, bb)
+plotSpatialData() +
+    plotImage(sq, 2, ch=chs, c=pal[chs]) +
+    plotShape(sq, fill=NA, col="white", linewidth=1)
 ```
 
 ### processing
@@ -236,29 +280,24 @@ in R/Bioconductor, e.g., `r BiocStyle::Biocpkg("scrapper")`, including:
 - community detection using the Leiden algorithm
 
 ```{r fil}
-se <- tables(sd)[[1]]
-assayNames(se) <- "counts"
-se <- quickRnaQc.se(se, list())
-cpa <- log(se$sum / se$cell_area)
-ex <- cpa < median(cpa)-2*mad(cpa)
-se$ex <- ex | !se$keep
+# exclude cells <2 MADs in log-counts per area
+cpa <- log(se$transcript_counts/se$cell_area)
+mad <- mad(cpa, na.rm=TRUE)
+med <- median(cpa, na.rm=TRUE)
+se$ex <- is.na(cpa) | (cpa < med-2*mad) 
 ```
 
-```{r}
+```{r message=FALSE}
 #| code-fold: true
-# bug? shapes are missing this...
-shape(sd) <- shape(sd) |> mutate(cell_id=`__index_level_0__`)
-shape(sd)@meta$spatialdata_attrs$instance_key <- "cell_id"
-
-sp <- sd
-table(sp) <- se
 plotSpatialData() + 
-    plotShape(sp, col=NA, fill="ex") + 
+    plotShape(`table<-`(sd, value=se), col=NA, fill="ex") + 
     scale_fill_manual("exclude", values=c("grey", "red"))
 ```
 
 ```{r pro}
-se <- se[, !ex]
+base::table(se$ex)
+se <- se[, !se$ex]
+assayNames(se) <- "counts"
 se <- normalizeRnaCounts.se(se)
 se <- chooseRnaHvgs.se(se)
 se <- runPca.se(se, features=rowData(se)$hvg)
@@ -312,7 +351,8 @@ to identify multi-cellular anatomical substructures using `sosta`;
 we'll then assign these to our object as a new `shape` element:
 
 ```{r sosta-roi, message=FALSE}
-roi <- reconstructShapeDensity(pp, markSelect=6, dim=400)
+use <- which.max(table(se$clusters))
+roi <- reconstructShapeDensity(pp, markSelect=use, dim=400)
 st_geometry(roi) <- "geometry"
 roi <- SpatialDataShape(roi)
 shape(sd, "roi") <- roi
@@ -330,7 +370,7 @@ pseudo-bulks using `mask()`; here, `how` specifies how to do that:
 
 ```{r}
 sd <- mask(sd, i="cell_boundaries", j="roi", how="sum")
-(pb <- element(sd, "cell_boundaries_by_roi"))
+(pb <- tail(tables(sd), 1)[[1]])
 ```
 
 ```{r}
@@ -347,7 +387,6 @@ apply(pc$rotation[, 1:3], 2, \(.) head(names(sort(abs(.), decreasing=TRUE)), 10)
 ```
 
 ```{r}
-# visualize top-loaded feature for 1st PC
 plotSpatialData() + 
     plotShape(sd, col=NA, fill="XBP1", assay="logcounts") +
     scale_fill_gradientn(colors=rev(hcl.colors(9, "Roma")))
