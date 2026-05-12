@@ -191,14 +191,13 @@ plotSpatialData() + plotImage(sd)
 ```
 
 We can also zoom into a particular region by specifying a bounding box and
-using `crop()` to subset the data accordingly; to do this more efficiently,
-we subset the object to contain only images before cropping:
+using `crop()` to subset the data accordingly:
 
 ```{r plt-he-box}
 bb <- list(
     xmin=15e3, xmax=18e3, 
     ymin=44e3, ymax=46e3)
-sp <- crop(sd["images", ], bb)
+sp <- crop(sd, bb)
 plotSpatialData() + plotImage(sp) 
 ```
 
@@ -242,6 +241,8 @@ ps <- lapply(chs, \(.) plotSpatialData() + plotImage(sp, 2, ch=., c=pal[.]) + gg
 wrap_plots(ps, nrow=2) & theme_void() & theme(plot.title=element_text(hjust=0.5), legend.position="none")
 ```
 
+#### segmentation
+
 We can also zoom in further to inspect how well cell segmentation boundaries 
 align with histopathology and the immunofluorescence signals used to get them:
 
@@ -261,7 +262,7 @@ plotSpatialData() +
 We can also go a step further, visualizing both cell nuclei (in gold) 
 and membrane (in grey) boundaries togeher on an ever smaller region:
 
-```{r fig.height=6}
+```{r}
 bb <- list(
     xmin=15e3, xmax=16e3,
     ymin=43e3, ymax=44e3)
@@ -272,11 +273,13 @@ plotSpatialData() +
     plotShape(sq, 2, fill=NA, col="gold", linewidth=1/3)
 ```
 
+#### transcripts 
+
 Going all the way, let's zoom in to a couple cells in order to visualize 
 4,000 individual transcript molecules as well; we'll color these by whether
 or not they have been determined to `overlaps_nucleus` (according to 10x):
 
-```{r fig.height=6}
+```{r}
 bb <- list(
     xmin=15200, xmax=15800,
     ymin=43200, ymax=43800)
@@ -291,6 +294,35 @@ plotSpatialData() +
     scale_color_manual(values=c("grey", "red"))
 ```
 
+Going back to a larger scale...
+
+```{r fig.width=8, fig.height=4}
+#| code-fold: true
+bb <- list(xmin=16e3, xmax=18e3, ymin=45e3, ymax=46e3)
+sq <- crop(sd[c("images", "points"), list(2, 1)], bb)
+plotSpatialData() + 
+    plotImage(sq, ch="DAPI", c="purple") +
+    plotPoint(sq, n=1e4, col="ivory", size=0) +
+    theme_void() + theme(legend.position="none")
+```
+
+Let's quantify the number of transcripts that do no fall within any cell. 
+We do this by `mask`ing `transcripts` by the `cell_boundaries` shape element; 
+this will return a new `SpatialData` object with an additional table in which
+rows = features and columns = cells; here, one extra column ("0") will collect 
+data on transcripts that do not intersect with *any* shape:
+
+```{r}
+se <- mask(sd, 
+    i="transcripts", j="cell_boundaries")$
+    tables$transcripts_by_cell_boundaries
+# unassigned
+(n <- se$n_instances[["0"]]) 
+# percentage
+m <- length(point(sd))
+round(100*n/m, 2)
+```
+
 ### processing
 
 The `SpatialData` object contains a single `table` element -- represented as a
@@ -300,7 +332,7 @@ matrix (`assay` slot `"X"`), gene/cell metadata (`row/colData`), as well as
 spatial coordinates (`reducedDim` slot `"spatial"`).
 
 ```{r get-tbl}
-(se <- tables(sd)[[1]])
+(se <- sd$tables$cell_boundaries_table)
 ```
 
 Note that these data originally stem from a Python `anndata` object written 
