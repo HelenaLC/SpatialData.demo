@@ -314,7 +314,7 @@ data on transcripts that do not intersect with *any* of the shapes (= cells).
 
 ::: {.column-margin}
 It'd be an interesting exercise to summarize transcripts by nuclear boundaries
-instead, and compare the resulting gene $\times$ cell data with those derived
+instead, and to compare the resulting gene$\times$cell data with those derived
 from membrane boundaries that are already available in the object (see below).
 :::
 
