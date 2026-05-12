@@ -302,15 +302,21 @@ bb <- list(xmin=16e3, xmax=18e3, ymin=45e3, ymax=46e3)
 sq <- crop(sd[c("images", "points"), list(2, 1)], bb)
 plotSpatialData() + 
     plotImage(sq, ch="DAPI", c="purple") +
-    plotPoint(sq, n=1e4, col="ivory", size=0) +
+    plotPoint(sq, n=8e3, col="ivory", size=0) +
     theme_void() + theme(legend.position="none")
 ```
 
-Let's quantify the number of transcripts that do no fall within any cell. 
-We do this by `mask`ing `transcripts` by the `cell_boundaries` shape element; 
+Let's quantify the number of transcripts that do not map to any cells at all.
+We do this by `mask`ing `transcripts` by the `cell_boundaries` shape element;
 this will return a new `SpatialData` object with an additional table in which
 rows = features and columns = cells; here, one extra column ("0") will collect 
-data on transcripts that do not intersect with *any* shape:
+data on transcripts that do not intersect with *any* of the shapes (= cells).
+
+::: {.column-margin}
+It'd be an interesting exercise to summarize transcripts by nuclear boundaries
+instead, and compare the resulting gene $\times$ cell data with those derived
+from membrane boundaries that are already available in the object (see below).
+:::
 
 ```{r}
 se <- mask(sd, 
