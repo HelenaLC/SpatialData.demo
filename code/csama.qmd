@@ -11,27 +11,48 @@ These include the following elements:
 - one `point` (RNA transcripts)
 
 A size-reduced example dataset has been deposited on Zenodo. 
-We'll first retrieve the compressed *.zarr* store programatically, 
-decompress it, and stash the data's on-disk file path for later:
+We'll first retrieve the compressed `SpatialData` `.zarr` store together
+with a reference scRNA-seq dataset from [Janesick et al.](https://www.nature.com/articles/s41467-023-43458-x), 
+decompress both archives, and stash their on-disk file paths for later:
 
-```{r load-zarr}
-# retrieve .zarr
-url <- file.path(
-    "https://zenodo.org/records/20120907/files",
-    "BC_xenium_sdata_AL_LR.zarr.zip?download=1")
-zip <- tempfile("sd", fileext=".zarr.zip")
-download.file(url, zip, quiet=TRUE)
+```{r load-data}
+# retrieve SpatialData .zarr
+url_zarr <- file.path(
+    "https://zenodo.org/records/20178278/files",
+    "BC_10x_xenium_sdata.zarr.zip?download=1")
 
-# decompress, stash & view contents
-nm <- unzip(zip, exdir=dirname(zip))
-zs <- grepv("zarr$", dirname(nm))
-cat(basename(zs))
+zip_zarr <- tempfile("sd", fileext=".zarr.zip")
+download.file(url_zarr, zip_zarr, quiet=TRUE)
+
+# decompress .zarr
+nm_zarr <- unzip(zip_zarr, exdir=dirname(zip_zarr))
+zs <- grep("zarr$", dirname(nm_zarr), value=TRUE)
+
+# retrieve scRNA-seq reference
+url_scrna <- file.path(
+    "https://zenodo.org/records/20178278/files",
+    "BC_scRNAseq_subset.h5ad.zip?download=1")
+
+zip_scrna <- tempfile("scrna", fileext=".h5ad.zip")
+download.file(url_scrna, zip_scrna, quiet=TRUE)
+
+# decompress .h5ad
+nm_scrna <- unzip(zip_scrna, exdir=dirname(zip_scrna))
+h5 <- grep("h5ad$", nm_scrna, value=TRUE)
+
+# show retrieved files
+cat(
+    basename(zs), "\n",
+    basename(h5), "\n"
+)
 ```
 
 ```{r show-zarr, echo=FALSE}
 htmltools::pre(
     style="max-height:333px; overflow-y:auto;",
-    paste(capture.output(fs::dir_tree(zs, recurse=2))[-1], collapse="\n"))
+    paste(
+        capture.output(fs::dir_tree(zs, recurse=2))[-1],
+        collapse="\n"))
 ```
 
 ### dependencies
@@ -74,24 +95,20 @@ pip install segtraq
 
 We can then activate it from R using `reticulate`:
 
-```{r py-env-conda}
+```{r py-env-conda, eval=FALSE}
 library(reticulate)
 
-# optional: specify path to conda binary
-# options(
-#     reticulate.conda_binary =
-#         "~/software/mambaforge/bin/conda"
-# )
+# path to conda binary
+bin <- "~/software/mambaforge/bin/conda" 
+options(reticulate.conda_binary=bin)
 
 # activate environment
-use_condaenv("segtraq", required = TRUE)
-
-py_config()
+use_condaenv("segtraq")
 ```
 
 #### uv
 
-Alternatively, we can use a local virtual environment created with `uv`.
+Alternatively, we can use a local virtual environment created with `uv` (install via `brew install uv`).
 
 This environment was created previously from the command line:
 
@@ -134,23 +151,31 @@ logging.getLogger("spatialdata_plot").propagate = False
 logging.getLogger("spatialdata_plot").setLevel(logging.ERROR)
 ```
 
-### segmentation
-
+### segmentation QC
+We first load the `SpatialData` object from the `.zarr` store:
 ```{python segtraq-load}
 import spatialdata as sd
 sdata = sd.read_zarr(r.zs)
 sdata
 ```
 
-```{python segtraq-calc}
+To compute quality control (QC) metrics for cell segmentation and transcript
+assignment, we use the python package [`SegTraQ`](https://github.com/LazDaria/SegTraQ).
+
+`SegTraQ` organizes metrics into six modules; here, we begin with the
+baseline (`bl`) module, which computes per-cell and per-sample summary statistics
+such as transcript counts, detected genes, cell area, and fractions of
+unassigned transcripts.
+
+Metrics can either be computed individually, e.g. via `st.bl.transcripts_per_cell()`
+or jointly by running the full `bl` module with `st.run_baseline()`.
+
+```{python segtraq-baseline}
 import segtraq
 
-sdata.shapes["cell_boundaries"].index.name = "cell_id"
-sdata.shapes["nucleus_boundaries"].index.name = "cell_id"
-
 st = segtraq.SegTraQ(sdata,
-    tables_centroid_x_key=None,
-    tables_centroid_y_key=None,
+    tables_centroid_x_key="centroid_x",
+    tables_centroid_y_key="centroid_y",
     images_key="morphology_focus")
 
 st.run_baseline()
@@ -159,40 +184,121 @@ adata = st.sdata.tables["table"]
 adata
 ```
 
+Of the six `SegTraQ` modules, only the supervised (`sp`) module requires scRNA-seq
+reference data. Label transfer can either be performed using a lightweight
+`SegTraQ` helper, or supplied by the user directly.
+
+Here, we use the scRNA-seq reference from Janesick et al. downloaded above
+and transfer labels to the spatial data using a `SegTraQ` helper.
+
+```{python segtraq-labeltransfer}
+import anndata as ad
+
+ref = ad.read_h5ad(r.h5)
+
+st.run_label_transfer(
+    ref, 
+    ref_cell_type="celltype", 
+    ref_ensemble_key=None, 
+    query_ensemble_key=None)
+```
+
+We use this reference to derive positive and negative cell type markers,
+i.e. genes expected to be present or absent in a given cell type, and pass
+these to the `sp` module to identify contaminated cells.
+
+```{python segtraq-supervised}
+#subset to common genes
+adata = st.sdata["table"]
+common_genes = adata.var_names[adata.var_names.isin(ref.var_names)]
+ref = ref[:, common_genes].copy()
+
+markers = segtraq.markers_from_reference(
+    ref,
+    cell_type_key="celltype",
+    n_jobs=16,
+)
+
+_ = st.run_supervised(markers=markers, cell_type_key="transferred_cell_type")
+```
+
+In the absence of scRNA-seq data, `SegTraQ` provides the region similarity (`rs`) module, which identifies contaminated cells based on the expression similarity between subcellular regions and the local neighborhood. This module performs compute-intensive `geopandas` join operations, here we therefore just show one metric for demonstration instead of running the entire module. 
+
+```{python segtraq-region-similarity}
+_ = st.rs.similarity_border_neighborhood()
+```
+
+```{python segtraq-region-similarity}
+_ = st.rs.border_admixture_score(n_jobs=-1)
+```
+
+We can visualize the H&E image, the immunofluorescence channel DAPI, and the cell boundaries colored by the transferred cell type label or `SegTraQ` metrics. 
+
 ```{python segtraq-plot}
 #| code-fold: true
 import spatialdata_plot
 import matplotlib.pyplot as plt
 
-fg, ax = plt.subplots(1, 3, figsize=(14, 4), constrained_layout=True)
+fg, ax = plt.subplots(2, 3, figsize=(14, 8), constrained_layout=True)
 fg.subplots_adjust(wspace=0.5)
-ax = ax.flatten()
 
 # plot histopathology
 st.sdata.pl.render_images(
     "he_image"
 ).pl.show(
-    ax=ax[0], 
+    ax=ax[0, 0], 
     title="H&E")
 
-# plot cell boundaries
-st.sdata.pl.render_shapes(
-    element="cell_boundaries",
-    color="transcript_counts",
-    method="matplotlib"
-).pl.show(
-    ax=ax[1], 
-    colorbar=True,
-    title="Tx counts")
-    
 # plot immunofluorescence
 st.sdata.pl.render_images(
     "morphology_focus", 
     channel="DAPI"
 ).pl.show(
-    ax=ax[2], 
+    ax=ax[0, 1], 
     title="DAPI")
+
+# plot cell boundaries colored by cell type
+st.sdata.pl.render_shapes(
+    element="cell_boundaries",
+    color="transferred_cell_type",
+    method="matplotlib"
+).pl.show(
+    ax=ax[0, 2], 
+    colorbar=True,
+    title="Cell type")
+
+# plot cell boundaries colored by transcript count
+st.sdata.pl.render_shapes(
+    element="cell_boundaries",
+    color="transcript_count",
+    method="matplotlib"
+).pl.show(
+    ax=ax[1, 0], 
+    colorbar=True,
+    title="Transcript count")
+    
+# plot cell boundaries colored by negative marker counts
+st.sdata.pl.render_shapes(
+    element="cell_boundaries",
+    color="negative_marker_contamination_counts",
+    method="matplotlib"
+).pl.show(
+    ax=ax[1, 1], 
+    colorbar=True,
+    title="Negative marker (contamination) count")
+
+# plot cell boundaries colored by border contamination
+st.sdata.pl.render_shapes(
+    element="cell_boundaries",
+    color="border_admixture_score",
+    method="matplotlib"
+).pl.show(
+    ax=ax[1, 2], 
+    colorbar=True,
+    title="Border contamination")
 ```
+
+Now we can move on to explore and visualize these QC metrics in more detail in `R`.
 
 ```{r echo=FALSE}
 knitr::opts_chunk$set(eval=TRUE)
@@ -209,10 +315,6 @@ segmentation boundaries using `setTable()`; `ik` specifies the `spatialdata`'s
 # intentionally skip reading table layer; 
 # we'll get it from Python with 'anndataR'
 sd <- readSpatialData(zs, tables=FALSE)
-
-# bug? shapes are missing this...
-shape(sd) <- mutate(shape(sd), cell_id=`__index_level_0__`)
-shape(sd)@meta$spatialdata_attrs$instance_key <- "cell_id"
 
 # set Python table to annotate 
 # cell segmentation boundaries
