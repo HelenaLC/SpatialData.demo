@@ -1,2 +1,10 @@
 /_site/
 /.quarto/
+.RData
+.Rhistory
+.venv*
+.Rprofile
+renv.lock
+renv/*
+/docs/site_libs/*
+/docs/search.json
