@@ -1,2 +1,8 @@
 /_site/
 /.quarto/
+.RData
+.Rhistory
+.venv*
+.Rprofile
+renv.lock
+renv/*

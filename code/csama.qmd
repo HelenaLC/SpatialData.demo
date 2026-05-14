@@ -50,30 +50,74 @@ library(SpatialData.plot)
 library(SingleCellExperiment)
 ```
 
-### setup
+### setup python
 
-We can instruct our session to use an existing environment with our Python 
-dependencies (here, `SegTraQ`) as follows. Note that `reticulate` provides 
-similar commands to, e.g., use a virtual (not conda) environemnt instead:
+We can instruct our R session to use an existing Python environment with our
+required dependencies (here, `SegTraQ`) via `reticulate`.
 
-::: {.column-margin}
-The environment used here has been set up previously outside of R, 
-from the command line, using these commands:
-```
+Below we demonstrate two common approaches:
+
+- a **conda/mamba** environment
+- a lightweight **uv** virtual environment
+
+::: {.panel-tabset}
+
+#### conda / mamba
+
+This environment was created previously from the command line:
+
+```bash
 conda create -n segtraq python=3.11
 conda activate segtraq
 pip install segtraq
 ```
-:::
 
-```{r py-env}
-# path to conda binary
-bin <- "~/software/mambaforge/bin/conda" 
-options(reticulate.conda_binary=bin)
+We can then activate it from R using `reticulate`:
+
+```{r py-env-conda}
+library(reticulate)
+
+# optional: specify path to conda binary
+# options(
+#     reticulate.conda_binary =
+#         "~/software/mambaforge/bin/conda"
+# )
 
 # activate environment
-use_condaenv("segtraq")
+use_condaenv("segtraq", required = TRUE)
+
+py_config()
 ```
+
+#### uv
+
+Alternatively, we can use a local virtual environment created with `uv`.
+
+This environment was created previously from the command line:
+
+```bash
+uv venv .venv --python 3.11
+source .venv/bin/activate
+uv pip install segtraq
+```
+
+We can then point `reticulate` directly to the Python executable:
+
+```{r py-env-uv}
+library(reticulate)
+
+venv_path <- file.path(
+    getwd(),
+    ".venv/bin/python"
+)
+
+use_python(venv_path, required = TRUE)
+```
+
+:::
+
+Once configured, Python modules can be imported directly from R via
+`reticulate`.
 
 ```{python py-opt, echo=FALSE}
 import joblib
