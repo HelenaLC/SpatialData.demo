@@ -10,43 +10,45 @@ These include the following elements:
 - one `table` (gene $\times$ cell data)
 - one `point` (RNA transcripts)
 
-### load data and libraries
+### Preamble
+
+#### Dataset
 
 A size-reduced example dataset has been deposited on Zenodo. 
-We'll first retrieve the compressed `SpatialData` `.zarr` store together
-with a reference scRNA-seq dataset from [Janesick et al.](https://www.nature.com/articles/s41467-023-43458-x), 
+We'll retrieve the compressed `SpatialData` *.zarr* store together 
+with a reference scRNA-seq dataset in *.h5ad* format [@Janesick2023], 
 decompress both archives, and stash their on-disk file paths for later:
 
-```{r load-data}
-# retrieve SpatialData .zarr
-url_zarr <- file.path(
-    "https://zenodo.org/records/20180722/files",
-    "BC_10x_xenium_sdata.zarr.zip?download=1")
-
-zip_zarr <- tempfile("sd", fileext=".zarr.zip")
-download.file(url_zarr, zip_zarr, quiet=TRUE)
-
-# decompress .zarr
-nm_zarr <- unzip(zip_zarr, exdir=dirname(zip_zarr))
-zs <- grep("zarr$", dirname(nm_zarr), value=TRUE)
-
-# retrieve scRNA-seq reference
-url_scrna <- file.path(
+```{r load-h5ad}
+# scRNA-seq data (.h5ad)
+url_h5 <- file.path(
     "https://zenodo.org/records/20178278/files",
     "BC_scRNAseq_subset.h5ad.zip?download=1")
 
-zip_scrna <- tempfile("scrna", fileext=".h5ad.zip")
-download.file(url_scrna, zip_scrna, quiet=TRUE)
+# retrieve
+zip_h5 <- tempfile(fileext=".h5ad.zip")
+download.file(url_h5, zip_h5, quiet=TRUE)
 
-# decompress .h5ad
-nm_scrna <- unzip(zip_scrna, exdir=dirname(zip_scrna))
-h5 <- grep("h5ad$", nm_scrna, value=TRUE)
+# decompress
+fnm_h5 <- unzip(zip_h5, exdir=dirname(zip_h5))
+h5 <- grep("h5ad$", fnm_h5, value=TRUE)
+cat(basename(h5))
+```
 
-# show retrieved files
-cat(
-    basename(zs), "\n",
-    basename(h5), "\n"
-)
+```{r load-zarr}
+# SpatialData store (.zarr)
+url_zs <- file.path(
+    "https://zenodo.org/records/20180722/files",
+    "BC_10x_xenium_sdata.zarr.zip?download=1")
+
+# retrieve
+zip_zs <- tempfile(fileext=".zarr.zip")
+download.file(url_zs, zip_zs, quiet=TRUE)
+
+# decompress
+fnm_zs <- unzip(zip_zs, exdir=dirname(zip_zs))
+zs <- grep("zarr$", dirname(fnm_zs), value=TRUE)
+cat(basename(zs))
 ```
 
 ```{r show-zarr, echo=FALSE}
@@ -57,6 +59,11 @@ htmltools::pre(
         collapse="\n"))
 ```
 
+#### Libraries
+
+Throughout this demo, we'll require the following R dependencies; 
+these expect R v4.6.0 and Bioconductor v3.24 (devel/pre-release).
+
 ```{r load-libs, message=FALSE, warning=FALSE}
 library(sf)
 library(dplyr)
@@ -65,25 +72,25 @@ library(ggplot2)
 library(anndataR)
 library(scrapper)
 library(patchwork)
+library(ggnewscale)
 library(reticulate)
 library(SpatialData)
 library(SpatialData.data)
 library(SpatialData.plot)
 library(SingleCellExperiment)
-library(ggnewscale)
 ```
 
-### image visualization
+### Visualization
 
 Let's load up the `SpatialData` object in `R`. 
+
 ```{r}
-sd <- readSpatialData(zs)
-sd
+(sd <- readSpatialData(zs))
 ```
 
-#### histopathology
+#### Histopathology
 
-Let's start out by visualization the hematoxylin and eosin (H&E) staining.
+Let's start out by visualization the hematoxylin and eosin (H\&E) staining.
 H\&E provides a high-contrast visualization of tissue microarchitecture and 
 cellular morphology through differential staining of nuclear and cytoplasmic 
 components. To date, whole-slide H\&E images (WSIs) remain the clinical gold 
@@ -93,10 +100,10 @@ standard for cancer diagnosis, including tumor grading, staging, and prognosis.
 plotSpatialData() + plotImage(sd)
 ```
 
-We can also zoom into a particular region by specifying a bounding box and
-using `crop()` to subset the data accordingly:
+We can also zoom into a particular region by specifying a bounding box 
+and using `crop()` to subset the data accordingly across all layers:
 
-```{r plt-he-box}
+```{r plt-he-bb}
 bb <- list(
     xmin=15e3, xmax=18e3, 
     ymin=44e3, ymax=46e3)
@@ -104,7 +111,7 @@ sp <- crop(sd, bb)
 plotSpatialData() + plotImage(sp) 
 ```
 
-#### immunofluorescence
+#### Immunofluorescence
 
 In addition to the H\&E, the dataset includes 4 immunofluorescence (IF) markers:
 
@@ -113,7 +120,7 @@ In addition to the H\&E, the dataset includes 4 immunofluorescence (IF) markers:
 * 18S (cytoplasm) marks the cell body/cytoplasmic RNA and overall cell extent
 * αSMA/Vimentin (stroma) marks mesenchymal/stromal tissue, including fibroblasts
 
-These channels are part of the 10x segmentation kit and are used in the [multimodal cell segmentation workflow](https://cdn.10xgenomics.com/image/upload/v1754601291/support-documents/CG000750_XeniumInSitu_CellSegmentation_TechNote_RevB.pdf).
+[These channels are part of the 10x segmentation kit and are used in the [multimodal cell segmentation workflow](https://cdn.10xgenomics.com/image/upload/v1754601291/support-documents/CG000750_XeniumInSitu_CellSegmentation_TechNote_RevB.pdf).]{.aside}
 
 ```{r if-chs}
 img <- image(sd, 2)
@@ -138,24 +145,36 @@ chs <- names(pal) <- channels(img)
 plotSpatialData() + plotImage(sd, 2, ch=chs, c=pal[chs])
 ```
 
-Alternatively, we can visualize each channel separately; 
-here, using the previously defined smaller region:
+Alternatively, we can visualize each channel separately; here, using the smaller 
+region define above. [Note that `plotImage()` will auto-adjust contrast limits 
+for each channel when rendering images. Channels might hence appear differently 
+when visualized jointly/separately.]{.aside}
 
 ```{r plt-if-one}
-ps <- lapply(chs, \(.) plotSpatialData() + plotImage(sp, 2, ch=., c=pal[.]) + ggtitle(.))
-wrap_plots(ps, nrow=2) & theme_void() & theme(plot.title=element_text(hjust=0.5), legend.position="none")
+# plot channels one by one
+lapply(chs, \(.) {
+    plotSpatialData() + ggtitle(.) +
+    plotImage(sp, i=2, ch=., c=pal[.])
+}) |>
+# arrange in 2x2 grid
+wrap_plots(nrow=2) &
+    theme_void() & theme(
+        legend.position="none",
+        plot.title=element_text(hjust=0.5))
 ```
 
-#### segmentation masks
+#### Segmentation
 
 We can also zoom in further to inspect how well cell segmentation boundaries 
-align with histopathology and the immunofluorescence signals used to get them:
+align with histopathology and the immunofluorescent signals used to get them:
 
 ```{r plt-if-seg, fig.width=11, fig.height=6}
+# crop to 2,000 x 3,000 bounding box
 bb <- list(
     xmin=15e3, xmax=17e3,
     ymin=42e3, ymax=45e3)
 sq <- crop(sd, bb)
+# visualize HE & IF side-by-side
 plotSpatialData() + 
     plotImage(sq, 1) +
     plotShape(sq, fill=NA, col="black", linewidth=1/5) +
@@ -168,28 +187,36 @@ We can also go a step further, visualizing both cell nuclei (in gold)
 and membrane (in grey) boundaries togeher on an ever smaller region:
 
 ```{r crop-1}
+# crop to 1,000 x 1,000 bounding box
 bb <- list(
     xmin=15e3, xmax=16e3,
     ymin=43e3, ymax=44e3)
 sq <- crop(sd, bb)
+# visualize IF, membrane & nuclei boundaries
 plotSpatialData() + 
     plotImage(sq, 2, ch=chs, c=pal[chs]) +
     plotShape(sq, 1, fill=NA, col="grey", linewidth=1/3) +
     plotShape(sq, 2, fill=NA, col="gold", linewidth=1/3)
 ```
 
-#### transcripts 
+#### Transcripts 
 
 Going all the way, let's zoom in to a couple cells in order to visualize 
 4,000 individual transcript molecules as well; we'll color these by whether
 or not they have been determined to `overlaps_nucleus` (according to 10x):
 
 ```{r}
+# crop to 600 x 600 bounding box
 bb <- list(
     xmin=15200, xmax=15800,
     ymin=43200, ymax=43800)
 sq <- crop(sd, bb)
+
+# 'overlaps_nucleus' is 0/1 (no/yes);
+# convert to logical for discrete coloring
 point(sq) <- mutate(point(sq), overlaps_nucleus=as.logical(overlaps_nucleus))
+
+# visualiye IF, boundaries & transcripts
 plotSpatialData() + 
     plotImage(sq, 2, ch=chs, c=pal[chs]) +
     plotShape(sq, 1, fill=NA, col="grey", linewidth=1/3) +
@@ -199,7 +226,7 @@ plotSpatialData() +
     scale_color_manual(values=c("grey", "red"))
 ```
 
-Going back to a larger scale...
+Going back to a larger scale, let's finish with an aesthetically pleasing plot:
 
 ```{r fig.width=8, fig.height=4}
 #| code-fold: true
@@ -211,20 +238,21 @@ plotSpatialData() +
     theme_void() + theme(legend.position="none")
 ```
 
-### segmentation qc
-Visual inspection is essential; however, accurately assessing transcript
-assignment would in principle require inspection of transcript localization in
-3D across thousands of genes, which quickly becomes infeasible for modern
-high-plex panels. The [`SegTraQ`](https://github.com/LazDaria/SegTraQ) package provides a colloection of metrics for **Seg**mentation and **Tr**anscript **A**ssignment **Q**uality Control. 
-While `SegTraQ` is implemented in Python, `reticulate` enables seamless
-interoperability between Python and R. We can therefore compute QC metrics in
-Python and subsequently switch back to R for visualization and downstream
-exploration.
+### Quality Control
 
-#### running segtraq in python
+Visual inspection is essential. Systematic assessment of transcript-to-cell assignments would, however, require inspection of transcript localization in 
+3D across thousands of genes, which is infeasible for modern high-plex panels. 
+`r BiocStyle::Githubpkg("LazDaria/SegTraQ")` provides a collection of metrics 
+for **Seg**mentation and **Tr**anscript **A**ssignment **Q**uality Control. 
 
-We can instruct our R session to use an existing Python environment with our
-required dependencies (here, `SegTraQ`) via `reticulate`.
+While `SegTraQ` is implemented in Python, `r BiocStyle::CRANpkg("reticulate")`
+and Quarto enable us to execute both programming languages in one session. 
+We can thus compute QC metrics in Python and subsequently switch back to R.
+
+#### Python setup
+
+We can instruct our R session to use an existing Python environment 
+with our required dependencies (here, `SegTraQ`) via `reticulate`.
 Below we demonstrate two common approaches:
 
 - a **conda/mamba** environment
@@ -232,21 +260,11 @@ Below we demonstrate two common approaches:
 
 ::: {.panel-tabset}
 
-##### conda / mamba
+##### conda/mamba
 
-This environment was created previously from the command line:
+We can instruct `reticulate` to use an existing conda/mamba environment via:
 
-```bash
-conda create -n segtraq python=3.11
-conda activate segtraq
-pip install segtraq
-```
-
-We can then activate it from R using `reticulate`:
-
-```{r py-env-conda, eval=FALSE}
-library(reticulate)
-
+```{r py-env-conda, eval=TRUE}
 # path to conda binary
 bin <- "~/software/mambaforge/bin/conda" 
 options(reticulate.conda_binary=bin)
@@ -255,11 +273,26 @@ options(reticulate.conda_binary=bin)
 use_condaenv("segtraq")
 ```
 
+This environment was created previously from the command line via:
+
+```bash
+conda create -n segtraq python=3.11
+conda activate segtraq
+pip install segtraq
+```
+
 ##### uv
 
-Alternatively, we can use a local virtual environment created with `uv` (install via `brew install uv`).
+Alternatively, we can use a local virtual environment created with `uv` 
+(install via `brew install uv`) and point `reticulate` directly to the 
+corresponding Python executable:
 
-This environment was created previously from the command line:
+```{r py-env-uv, eval=FALSE}
+venv_path <- file.path(getwd(), ".venv/bin/python")
+use_python(venv_path, required=TRUE)
+```
+
+This environment was created previously from the command line via:
 
 ```bash
 uv venv .venv --python 3.11
@@ -267,36 +300,19 @@ source .venv/bin/activate
 uv pip install segtraq
 ```
 
-We can then point `reticulate` directly to the Python executable:
-
-```{r py-env-uv}
-library(reticulate)
-
-venv_path <- file.path(
-    getwd(),
-    ".venv/bin/python"
-)
-
-use_python(venv_path, required = TRUE)
-```
-
 :::
 
-##### load data and libraries
-Once configured, required Python modules can be imported:
-
+<!-- hidden; used to hide verbose Python messages, warnings, etc. -->
 ```{python py-opt, echo=FALSE}
 import joblib
 import logging
 import warnings
-import spatialdata as sd
-import segtraq
-import anndata as ad
-import spatialdata_plot
-import matplotlib.pyplot as plt
 
 warnings.filterwarnings("ignore")
 joblib.parallel.DEFAULT_BACKEND = "threading"
+
+logging.getLogger().propagate = False
+logging.getLogger().setLevel(logging.ERROR)
 
 logging.getLogger("spatialdata").propagate = False
 logging.getLogger("spatialdata").setLevel(logging.ERROR)
@@ -305,20 +321,30 @@ logging.getLogger("spatialdata_plot").propagate = False
 logging.getLogger("spatialdata_plot").setLevel(logging.ERROR)
 ```
 
+Once configured, required Python modules can be imported using Python syntax:
+
+```{python py-dep}
+import segtraq
+import anndata as ad
+import spatialdata_plot
+import spatialdata as sd
+import matplotlib.pyplot as plt
+```
+
+#### Running `SegTraQ`
+
 We first load the `SpatialData` object from the `.zarr` store in Python:
+
 ```{python segtraq-load}
 sdata = sd.read_zarr(r.zs)
 sdata
 ```
 
-##### compute SegTraQ metrics
-
-`SegTraQ` organizes metrics into six modules; here, we begin with the
-baseline (`bl`) module, which computes per-cell and per-sample summary statistics
-such as transcript counts, detected genes, cell area, and fractions of
-unassigned transcripts.
-
-Metrics can either be computed individually, e.g. via `st.bl.transcripts_per_cell()`
+`SegTraQ` organizes metrics into six modules. Here, we begin with the baseline 
+(`bl`) module, which computes a set of per-cell and -sample summary statistics 
+such as transcript counts, detected genes, cell area, and gene-wise fraction of 
+unassigned transcripts. 
+Metrics can be computed either individually (e.g., `st.bl.transcripts_per_cell()`), 
 or jointly by running the full `bl` module with `st.run_baseline()`.
 
 ```{python segtraq-baseline}
@@ -330,12 +356,11 @@ st = segtraq.SegTraQ(sdata,
 st.run_baseline()
 ```
 
-Of the six `SegTraQ` modules, only the supervised (`sp`) module requires scRNA-seq
-reference data. Label transfer can either be performed using a lightweight
-`SegTraQ` helper, or supplied by the user directly.
-
-Here, we use the scRNA-seq reference from Janesick et al. downloaded above
-and transfer labels to the spatial data using a `SegTraQ` helper.
+Of the six `SegTraQ` modules, only the supervised (`sp`) module requires 
+scRNA-seq reference data. Label transfer can either be performed using a 
+lightweight `SegTraQ` helper, or can be supplied by the user directly.
+Here, we use the scRNA-seq reference from @Janesick2023 retrieved above
+and transfer labels to the spatial data using the `SegTraQ` helper.
 
 ```{python segtraq-labeltransfer}
 ref = ad.read_h5ad(r.h5)
@@ -347,42 +372,44 @@ st.run_label_transfer(
     query_ensemble_key=None)
 ```
 
-We use this reference to derive positive and negative cell type markers,
-i.e. genes expected to be present or absent in a given cell type, and pass
-these to the `sp` module to identify contaminated cells. For demonstration,
-we compute two metrics from the `sp` module.
+We use this reference to derive positive and negative cell type markers --
+i.e., genes expected to be present or absent in a given cell type -- and pass
+these to the `sp` module in order to identify potentially contaminated cells. 
+For demonstration, we compute two metrics from the `sp` module.
 
 ```{python segtraq-supervised}
-#subset to common genes
+# subset to common genes
 adata = st.sdata.tables["table"]
 common_genes = adata.var_names[adata.var_names.isin(ref.var_names)]
 ref = ref[:, common_genes].copy()
 
+# get marker genes
 markers = segtraq.markers_from_reference(
     ref,
     cell_type_key="celltype",
-    n_jobs=16,
-)
+    n_jobs=16)
 
+# compute exemplary metrics
 _ = st.sp.neighbor_contamination(
-    markers=markers,
-    cell_type_key="transferred_cell_type"
-)
+    markers=markers, 
+    cell_type_key="transferred_cell_type")
 
 _ = st.sp.marker_purity(
     markers=markers,
-    cell_type_key="transferred_cell_type"
-)
-
+    cell_type_key="transferred_cell_type")
 ```
 
-In the absence of scRNA-seq data, `SegTraQ` provides the region similarity (`rs`) module, which identifies contaminated cells based on the expression similarity between subcellular regions and the local neighborhood. For demonstration, we one metric from the `rs` module.
+In the absence of reference scRNA-seq data, `SegTraQ` provides the region
+similarity (`rs`) module that identifies contaminated cells based on the 
+expression similarity between subcellular regions and their local neighborhood. 
+For demonstration, we here view one exemplary metric from the `rs` module.
 
 ```{python segtraq-region-similarity}
 st.rs.similarity_border_neighborhood().head()
 ```
 
-We can visualize the H&E image, the immunofluorescence channel DAPI, and the cell boundaries colored by the transferred cell type label or `SegTraQ` metrics. 
+We can visualize the H\&E image, the immunofluorescence channel DAPI, as well as 
+cell boundaries colored by the transferred cell type label or `SegTraQ` metrics. 
 
 ```{python segtraq-plot}
 #| code-fold: true
@@ -401,7 +428,7 @@ col_celltype = {
     "DCIS2": "#66a61e",
     "tumor": "#66c2a5",
     "stromal": "#d45943",
-    "nan": "#808080",
+    "nan": "#808080"
 }
 
 # compute per-cell color
@@ -473,13 +500,14 @@ st.sdata.pl.render_shapes(
 knitr::opts_chunk$set(eval=TRUE)
 ```
 
-After computing required QC metrics in Python, we can move on to explore and visualize these in more detail in `R`.
+After computing required QC metrics in Python, we'll move 
+back to R to explore and visualize these in more detail.
 
-#### exploration of QC metrics in R
-Let's retrieve the 
-`table`, including `SegTraQ` results, from Python, and transfer it to the 
-`SpatialData` object in R. We set the `table` to annotate cell
-segmentation boundaries using `setTable()`; `ik` specifies the `spatialdata`'s
+#### Back to R
+
+Let's retrieve the `table` -- including `SegTraQ` results -- from Python, and 
+transfer it to the `SpatialData` object in R. We set the `table` to annotate 
+cell boundaries using `setTable()`; here, `ik` specifies the `spatialdata`'s
 `instance_key` used to link observations between `table` and spatial element.
 
 ```{r transfer-python-table}
@@ -494,199 +522,137 @@ sd <- sd[c("images", "points", "shapes")]
     ik="cell_id"))
 ```
 
-Let's look at a summary of baseline metrics:
-```{r inspect-baseline-metrics}
-tbl <- table(sd)
+Let's being by recreating the Python `spatialdata_plot` from above in R:
 
-num_cells <- metadata(tbl)$num_cells
-
-p_unassigned <- metadata(tbl)$perc_unassigned_transcripts
-
-mean_tx <- mean(
-    tbl$transcript_count,
-    na.rm=TRUE
-)
-
-mean_gn <- mean(
-    tbl$gene_count,
-    na.rm=TRUE
-)
-
-cat(
-    "\n",
-    "#cells: ", num_cells,
-    "; %unassigned: ", round(p_unassigned, 2), "\n",
-    "mean #transcripts per cell: ", round(mean_tx, 2),
-    "; mean #genes per cell: ", round(mean_gn, 2), "\n",
-    "\n",
-    sep=""
-)
-```
-
-Approx. `r round(p_unassigned, 1)`% of transcripts were not assigned 
-to any cell. The mean transcript count per cell is 
-`r round(mean_tx, 1)`. The mean gene count per cell is `r round(mean_gn, 1)`. It is also relevant to inspect the mean transcript count per gene per cell. 
-
-Let's write a function to plot features per cell type as boxplots:
-```{r feature-by-celltype-box}
-# use same color mapping as in python
-pal <- py$col_celltype
-
-feature_by_celltype_boxplot <- function(feature) {
-
-    df <- as.data.frame(colData(se)) |>
-        filter(
-            !is.na(transferred_cell_type),
-            !is.na(.data[[feature]])
-        ) |>
-        mutate(
-            transferred_cell_type = reorder(
-                transferred_cell_type,
-                .data[[feature]],
-                FUN = median,
-                na.rm = TRUE
-            )
-        )
-
-    ggplot(
-        df,
-        aes(
-            x=transferred_cell_type,
-            y=.data[[feature]],
-            fill=transferred_cell_type
-        )
-    ) +
-        geom_boxplot(outlier.size=0.4) +
-        scale_fill_manual(
-            values=pal,
-            na.value="#808080"
-        ) +
-        labs(
-            x="Cell type",
-            y=feature
-        ) +
-        theme_bw() +
-        theme(
-            axis.text.x=element_text(angle=45, hjust=1),
-            legend.position="none"
-        )
-}
-```
-
-On average, cells express only 1–2 transcripts per gene:
-
-```{r plt-mean-transcripts-per-gene-box, fig.width=7, fig.height=4}
-feature_by_celltype_boxplot("mean_transcripts_per_gene")
-```
-
-We can also inspect the transcript_density. Some workflows (see below) recommend filtering cells based on transcript density. 
-However, this can bias filtering towards specific cell types, such as 
-macrophages, mast cells, or dendritic cells, which often exhibit large 
-cell areas but comparatively low transcript counts.
-
-```{r plt-mean-transcript-density, fig.width=7, fig.height=4}
-feature_by_celltype_boxplot("transcript_density")
-```
-
-Now, let's recreate the python `spatialdata_plot` from above in R (Helena please help)
-
-```{r segtraq-plot-r, fig.width=14, fig.height=8}
+```{r segtraq-plot-r, message=FALSE, fig.width=14, fig.height=8}
 #| code-fold: true
+.p <- \(x, y=FALSE) {
+    plotSpatialData() + ggtitle(x) + theme_void() + 
+    if (y) scale_fill_viridis_c(NULL, na.value="#808080")
+}
 
-p1 <- plotSpatialData() +
-    plotImage(sd, "he_image") +
-    ggtitle("H&E")
+p1 <- .p("H&E") + plotImage(sd)
+p2 <- .p("DAPI") + plotImage(sd, 2, ch="DAPI", c="yellow")
 
-p2 <- plotSpatialData() +
-    plotImage(sd, "morphology_focus", ch="DAPI", c="purple") +
-    ggtitle("DAPI")
+p3 <- .p("cell type") + 
+    plotShape(sd, col=NA, fill="transferred_cell_type") +
+    scale_fill_manual(values=pal, na.value="#808080")
 
-p3 <- plotSpatialData() +
-    plotShape(sd, "cell_boundaries", col=NA, fill="transferred_cell_type") +
-    ggtitle("Cell type")  +
-    scale_fill_manual(values=pal, na.value="#808080") +
-    ggtitle("Cell type") 
-
-p4 <- plotSpatialData() +
-    plotShape(sd, "cell_boundaries", col=NA, fill="elongation") +
-    ggtitle("Elongation")
-
-p5 <- plotSpatialData() +
-    plotShape(sd, "cell_boundaries", col=NA, fill="transcript_count") +
-    ggtitle("Transcript count")
-
-p6 <- plotSpatialData() +
-    plotShape(sd, "cell_boundaries", col=NA,
-        fill="negative_marker_contamination_counts") +
-    ggtitle("Negative marker (contamination) count")
+p4 <- .p("elongation", TRUE) + plotShape(sd, col=NA, fill="elongation")
+p5 <- .p("# transcripts", TRUE) + plotShape(sd, col=NA, fill="transcript_count")
+p6 <- .p("contamination", TRUE) + plotShape(sd, col=NA, fill="negative_marker_contamination_counts")
 
 ps <- list(p1, p2, p3, p4, p5, p6)
 
-wrap_plots(ps, nrow=2) &
-    theme_void() &
-    theme(
-        plot.title=element_text(
-            hjust=0.5,
-            size=9
-        ),
-        plot.margin=margin(1, 1, 1, 1),
-        legend.position="right"
-    )
+wrap_plots(ps, nrow=2) & theme(
+    legend.justification=c(0, 0.5),
+    plot.margin=margin(2,2, unit="mm"),
+    plot.title=element_text(hjust=0.5))
 ```
 
-Stromal cells show higher elongation, whereas T and B cells tend to have less elongated shapes:
+Now, let's look at a summary of baseline metrics:
 
-```{r plt-elongation-box, fig.width=7, fig.height=4}
-feature_by_celltype_boxplot("elongation")
+```{r inspect-baseline-metrics}
+#| code-fold: true
+se <- table(sd)
+
+n_gs <- mean(se$gene_count, na.rm=TRUE)
+n_tx <- mean(se$transcript_count, na.rm=TRUE)
+p_tx <- metadata(se)$perc_unassigned_transcripts
+
+df <- data.frame(
+    x=c("# cells", "μ(# genes)", "μ(# transcripts)", "% unassigned"),
+    y=format(round(c(ncol(se), n_gs, n_tx, p_tx), 2), digits=2))
+
+cat(sprintf("%-18s %10s\n", df$metric, df$value), sep="")
 ```
 
-After inspecting baseline metrics, we next assess potential contamination.
-Here, `SegTraQ` summarizes directed contamination between source and target
-cell types based on negative marker expression.
+- Around `r round(p_tx, 1)`% of transcripts were not assigned to any cell. 
+- The mean transcript count per cell is `r round(n_tx, 1)`. 
+- The mean gene count per cell is `r round(n_gs, 1)`. 
 
-NaN values indicate cell type pairs for which contamination cannot be assessed,
-either because the cell types are not spatial neighbors or because they do not
-share informative positive/negative marker combinations.
+It is also relevant to inspect the mean transcript count per gene per cell.
+We'll define a wrapper `.boxplot` to plot features per cell type as boxplots:
 
-The dataset contains only
-`r round(mean(tbl$transferred_cell_type == "tumor", na.rm=TRUE) * 100, 2)`
-% tumor cells, which likely explains why little or no contamination originating
-from tumor cells is detected.
+```{r feature-by-celltype-box}
+# use same color mapping as in python
+pal <- py$col_celltype
+.boxplot <- \(y) {
+    df <- colData(se) |>
+        as.data.frame() |>
+        # simplify naming
+        dplyr::rename(x=transferred_cell_type) |>
+        # exclude unassigned
+        filter(!is.na(x), !is.na(.data[[y]])) |>
+        # order ascendingly
+        mutate(x=reorder(x, .data[[y]], FUN=median, na.rm=TRUE))
+    # visualize 'y' across cell types
+    ggplot(df, aes(.data[[y]], x, fill=x)) +
+        geom_boxplot(outlier.size=0.4) +
+        scale_fill_manual(values=pal) +
+        ggtitle(y) + theme_bw() + theme(
+            aspect.ratio=1,
+            legend.position="none",
+            axis.title=element_blank(),
+            plot.title=element_text(hjust=0.5))
+}
+```
 
-About 19% of myoepithelial cells appear contaminated by DCIS2 cells,
-which are common spatial neighbors. 3% of T cells are contaminated by
-B cells. 
+- Stromal cells show higher elongation, whereas 
+T and B cells tend to have less elongated shapes.
+- On median, cells express only 1–2 transcripts per gene.
+- We can also inspect the `transcript_density`, i.e., transcript abundance 
+realtive to cellular area. Some workflows (see below) recommend filtering cells 
+based on transcript density. However, this can bias filtering towards specific 
+cell types, such as macrophages, mast cells, or dendritic cells, which tend to 
+be large but exhibit comparatively low transcript counts.
 
-```{r plt-contamination-heatmap, fig.width=5, fig.height=4}
+```{r plt-metrics-box, fig.width=11, fig.height=3.5}
+.boxplot("mean_transcripts_per_gene") +
+.boxplot("elongation") +
+.boxplot("transcript_density") 
+```
 
-mat <- metadata(table(sd))$negative_marker_contamination_binary
+After inspecting baseline metrics, we next assess potential contamination. 
+Here, `SegTraQ` summarizes directed contamination between source and target 
+cell types based on negative marker expression. 
 
-df <- as.data.frame(mat) |>
+- `NA` values indicate pairs for which contamination can't be assessed, 
+either because the cell types are not spatial neighbors, or because 
+they do not share informative positive/negative marker combinations. 
+
+- The dataset contains only few tumor cells (about
+`r round(mean(se$transferred_cell_type == "tumor",na.rm=TRUE)*100,2)`%), 
+which would explain why little or no contamination from them is being detected. 
+
+- About 19% of myoepithelial cells appear to be contaminated by DCIS2 cells, 
+which are common spatial neighbors. 3% of T cells are contaminated by B cells. 
+
+```{r plt-contamination-heatmap, fig.height=4}
+#| code-fold: true
+md <- metadata(table(sd))
+mx <- md$negative_marker_contamination_binary
+
+# wrangling
+df <- mx |>
+    as.data.frame() |>
     tibble::rownames_to_column("source_cell_type") |>
     pivot_longer(
         -source_cell_type,
         names_to="target_cell_type",
-        values_to="contamination"
-    )
+        values_to="contamination")
 
+# plotting
 ggplot(df, aes(
-    x=target_cell_type,
-    y=source_cell_type,
-    fill=contamination
-)) +
-    geom_tile() +
-    geom_text(aes(label=sprintf("%.2f", contamination)), size=2) +
-    scale_fill_gradient(low="white", high="red") +
-    labs(
-        x="Target cell type",
-        y="Source cell type",
-        fill=NULL
-    ) +
-    theme_bw() +
-    theme(
-        axis.text.x=element_text(angle=45, hjust=1),
-        panel.grid=element_blank()
-    )
+    target_cell_type, source_cell_type, fill=contamination)) + geom_tile() + 
+    scale_fill_gradient(low="white", high="red", na.value="lightgrey") +
+    geom_text(
+        aes(label=sprintf("%.2f", contamination)), 
+        filter(df, !is.na(df$contamination)), size=2) +
+    coord_equal(expand=FALSE) +
+    theme_bw() + theme(
+        panel.grid=element_blank(),
+        axis.text.x=element_text(angle=45, hjust=1))
 ```
 
 For demonstration, let's inspect mutually exclusive markers between B and T
@@ -699,33 +665,27 @@ mk <- py$markers
 B_pos <- unlist(mk$B$positive)
 T_neg <- unlist(mk$T$negative)
 
-mut_B_T <- intersect(B_pos, T_neg)
-mut_B_T
+sort(intersect(B_pos, T_neg))
 ```
 
-Let's visualize the expression of `MS4A1` in T & B cells. To this end, we crop the dataset to a region with a high density of B and T cells. Visually, `MS4A1` transcripts appear closer to the cell membrane in T cells
-than in B cells, which may be consistent with local transcript spillover.
-```{r crop-T-B}
+Let's visualize the expression of `MS4A1` in T and B cells. To this end, 
+we crop the dataset to a region with a high density of these cell types. 
+Visually, `MS4A1` transcripts appear closer to the cell membrane in T cells
+than in B cells, which would be consistent with local transcript spillover.
+
+```{r plt-ms4a1-tcells}
+# crop to 2,000 x 2,000 bounding box
 bb <- list(
     xmin=14e3, xmax=16e3,
     ymin=45e3, ymax=47e3)
 sq <- crop(sd, bb)
-```
 
-```{r plt-ms4a1-tcells}
+# visualize MS4A1 transcripts over labeled cells
 plotSpatialData() +
-    plotShape(sq, "cell_boundaries", col=NA, fill="transferred_cell_type", alpha=0.8) +
-    ggtitle("Cell type")  +
+    plotShape(sq, col=NA, fill="transferred_cell_type", alpha=0.8) +
     scale_fill_manual(values=pal, na.value="#808080") +
-    ggtitle("Cell type") +
-    plotPoint(
-        sq,
-        key="MS4A1",
-        colour="feature_name",
-        col="black",
-        size=0.3
-    ) +
-    ggtitle("MS4A1 transcripts in T and B cells")
+    plotPoint(sq, key="MS4A1", size=0.4) +
+    ggtitle("MS4A1 transcripts in T/B cells")
 ```
 
 Let's evaluate this with `SegTraQ`, which provides the point statistics (`ps`) module to quantify
@@ -740,64 +700,56 @@ _ = st.ps.distance_to_membrane(
     cell_type_query=["B", "T"])
 ```
 
-Let's jump back to R and plot the distance of `MS4A1` in B and T cells. 
+Let's jump back to R and plot the distance of `MS4A1` in B and T cells. Indeed,
+`MS4A1` is closer to the cell membrane in T than in B cells. This aligns with 
+these signals arising from spillover rather than true biological expression:
 
 ```{r transfer-python-table-2}
 se <- py$adata$as_SingleCellExperiment()
-
-# remove old table
-sd <- sd[c("images", "points", "shapes")]
-(sd <- setTable(sd, y=se, 
+sd <- setTable(sd, y=se, 
     i="cell_boundaries", 
-    ik="cell_id"))
+    ik="cell_id")
 ```
 
-Indeed, `MS4A1` is closer to the cell membrane in T than in B cells. This supports the interpretation that these signals likely arise from spillover rather than true biological expression.
-
-```{r plt-ms4a1-dist, fig.width=4, fig.height=4}
-df <- as.data.frame(colData(se)) |>
-    dplyr::filter(
+```{r plt-ms4a1-dist, fig.height=3}
+#| code-fold: true
+df <- colData(se) |>
+    as.data.frame() |>
+    filter(
         transferred_cell_type %in% c("B", "T"),
-        !is.na(distance_to_cell_membrane_norm_MS4A1)
-    )
+        !is.na(distance_to_cell_membrane_norm_MS4A1))
 
-ggplot(
-    df,
-    aes(
-        x=transferred_cell_type,
-        y=distance_to_cell_membrane_norm_MS4A1,
-        fill=transferred_cell_type
-    )
-) +
-    geom_boxplot(outlier.size=0.4, alpha=0.7) +
+ggplot(df, aes(
+    transferred_cell_type,
+    distance_to_cell_membrane_norm_MS4A1,
+    fill=transferred_cell_type)) +
+    geom_boxplot(outlier.size=1/3, alpha=1/3) +
     geom_jitter(
         aes(color=transferred_cell_type),
-        width=0.15,
-        size=0.8,
-        alpha=0.5
-    ) +
+        width=1/5, size=1/3, alpha=2/3) +
     scale_fill_manual(values=pal) +
     scale_color_manual(values=pal) +
-    labs(
-        x="Cell type",
-        y="Distance to cell membrane"
-    ) +
-    theme_bw() +
-    theme(legend.position="none")
+    theme_bw() + theme(
+        aspect.ratio=3/2,
+        legend.position="none",
+        axis.title=element_blank(),
+        plot.title=element_text(hjust=0.5)) +
+    ggtitle("distance of MS4A1\nto cell membrane") 
 ```
-
-To explore additional `SegTraQ` metrics, please refer to the
-[SegTraQ documentation](https://lazdaria.github.io/SegTraQ/?utm_source=chatgpt.com).
 
 `SegTraQ` can support the identification and filtering of low-quality cells
 or samples based on morphological abnormalities, low transcript counts, or
 increased contamination. It can also be used to benchmark segmentation methods
 and help identify the most suitable segmentation strategy for a given dataset.
 
-`SegTraQ` is still under active development, and additional metrics and
-improvements will be introduced in future releases.
+::: {.column-margin}
+To explore additional `SegTraQ` metrics, please refer to the
+[SegTraQ documentation](https://lazdaria.github.io/SegTraQ/).
+`SegTraQ` is still under active development; additional metrics 
+and improvements will keep being introduced in future releases.
+:::
 
-### other QC packages
+### Processing
 
 The `SpatialData` object contains a single `table` element -- represented as a
 `r BiocStyle::Biocpkg("SingleCellExperiment")` -- annotating `cell_boundaries`.
@@ -806,13 +758,13 @@ matrix (`assay` slot `"X"`), gene/cell metadata (`row/colData`), as well as
 spatial coordinates (`reducedDim` slot `"spatial"`).
 
 ```{r get-tbl}
-(se <- sd$tables$cell_boundaries_table)
+(se <- table(sd))
 ```
 
-Note that these data originally stem from a Python `anndata` object written 
-to `.zarr`, which were read into R using `r BiocStyle::Biocpkg("anndataR")`.
-We can therefore perform standard processing tasks using tools available 
-in R/Bioc (e.g., `r BiocStyle::Biocpkg("scrapper")`) such as filtering based on transcript_density:
+#### Filtering
+
+Because data are represented as a SCE, we can perform standard processing tasks using tools available in R/Bioc (e.g., `r BiocStyle::Biocpkg("scrapper")`) such
+as filtering little informative cells based on, e.g., `transcript_density`:
 
 ```{r fil}
 # exclude cells <2 MADs in log-counts per area
@@ -822,7 +774,7 @@ med <- median(cpa, na.rm=TRUE)
 se$ex <- is.na(cpa) | (cpa < med-2*mad) 
 ```
 
-```{r message=FALSE}
+```{r plt-fil, message=FALSE}
 #| code-fold: true
 plotSpatialData() + 
     plotShape(`table<-`(sd, value=se), col=NA, fill="ex") + 
@@ -853,23 +805,32 @@ table(sd) <- se
 Let's visualize the resulting cluster assignments spatially; from this, we can
 observe that malignant regions are mostly made up of a single (large) cluster:
 
-```{r plt-xy-clu, eval=FALSE, message=FALSE}
+```{r plt-xy-clu}
 plotSpatialData() + 
-    plotShape(sp, col=NA, fill="clusters") +
+    plotShape(sd, col=NA, fill="clusters") +
     scale_fill_manual(values=hcl.colors(nk, "Spectral")) 
 ```
 
-### downstream
+### Downstream
 
-#### structures
+#### Structures
+
+The R/Bioconductor package `r BiocStyle::Biocpkg("sosta")` [@Gunz2025-sosta]
+provides tools to identify and quantitatively characterize multi-cellular
+anatomical structures by modeling cells as a 'marker' point process, and
+delineating spatial structures based on a threshold on cellular 'intensity'.
+[Structures could, for example, represent germinal centers (GC) in tonsil, 
+metastases or tertiary lymphoid structures (TLS) in cancer, etc.]{.aside}
 
 ```{r message=FALSE, warning=FALSE}
 library(sosta)
 library(spatstat.geom)
 ```
 
-We'll start by construction a point pattern process (`ppp`) of 
-cell centroid coordinates, using cluster assignments as `marks`:
+We'll start by construction a point pattern process (`ppp`) of cell centroids, 
+using cluster assignments as `marks`. [Note that we first `transform` boundaries 
+to align with the coordinate space shared between all elements; alternatively, 
+this could be done after reconstruction of spatial structures.]{.align}
 
 ```{r sosta-ppp, warning=FALSE}
 xy <- centroids(SpatialData::transform(shape(sd)))
@@ -902,8 +863,14 @@ pseudo-bulks using `mask()`; here, `how` specifies how to do that:
 
 ```{r}
 sd <- mask(sd, i="cell_boundaries", j="roi", how="sum")
-(pb <- tail(tables(sd), 1)[[1]])
+(pb <- table(sd, "cell_boundaries_by_roi"))
 ```
+
+::: {.column-margin}
+In a multi-section setting, one could for example compare structure-level
+pseudobulks across sections, in terms of differential expression or 
+abundance of cell types (T cell exhaustion, immune infiltration, etc.).
+:::
 
 ```{r}
 pb <- normalizeRnaCounts.se(pb, 
@@ -915,10 +882,14 @@ pc <- runPca(assay(pb, "normcounts"))
 
 ```{r}
 # top-loaded features for PCs 1-3
-apply(pc$rotation[, 1:3], 2, \(.) head(names(sort(abs(.), decreasing=TRUE)), 10))
+apply(pc$rotation[, 1:3], 2, \(.) {
+    . <- sort(abs(.), decreasing=TRUE)
+    head(names(.), 10)
+})
 ```
 
 ```{r}
+#| code-fold: true
 plotSpatialData() + 
     plotShape(sd, col=NA, fill="XBP1", assay="logcounts") +
     scale_fill_gradientn(colors=rev(hcl.colors(9, "Roma")))
