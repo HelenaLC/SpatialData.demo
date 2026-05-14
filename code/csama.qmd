@@ -522,12 +522,20 @@ sd <- sd[c("images", "points", "shapes")]
     ik="cell_id"))
 ```
 
-Let's being by recreating the Python `spatialdata_plot` from above in R:
+Let's being by recreating the Python `spatialdata_plot` from above in R; 
+we can also retrieve the palette used for coloring cell types in Python:
 
-```{r segtraq-plot-r, message=FALSE, fig.width=14, fig.height=8}
+```{r}
+# get color mapping used in Python
+pal <- py$col_celltype
+```
+
+```{r segtraq-plot-r, message=FALSE, fig.width=12, fig.height=8}
 #| code-fold: true
+# base plot wrapper
 .p <- \(x, y=FALSE) {
-    plotSpatialData() + ggtitle(x) + theme_void() + 
+    plotSpatialData() + ggtitle(x) +
+    theme(axis.title=element_blank()) +
     if (y) scale_fill_viridis_c(NULL, na.value="#808080")
 }
 
@@ -547,7 +555,8 @@ ps <- list(p1, p2, p3, p4, p5, p6)
 wrap_plots(ps, nrow=2) & theme(
     legend.justification=c(0, 0.5),
     plot.margin=margin(2,2, unit="mm"),
-    plot.title=element_text(hjust=0.5))
+    plot.title=element_text(hjust=0.5),
+    axis.text.x=element_text(angle=30, hjust=1))
 ```
 
 Now, let's look at a summary of baseline metrics:
@@ -575,8 +584,6 @@ It is also relevant to inspect the mean transcript count per gene per cell.
 We'll define a wrapper `.boxplot` to plot features per cell type as boxplots:
 
 ```{r feature-by-celltype-box}
-# use same color mapping as in python
-pal <- py$col_celltype
 .boxplot <- \(y) {
     df <- colData(se) |>
         as.data.frame() |>
