@@ -6,3 +6,5 @@
 .Rprofile
 renv.lock
 renv/*
+/docs/site_libs/*
+/docs/search.json
