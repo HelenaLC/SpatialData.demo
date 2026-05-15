@@ -863,19 +863,70 @@ plotSpatialData() +
     scale_fill_manual(values=hcl.colors(nk, "Spectral")) 
 ```
 
-Next, we can use regions to aggregate cell-level measurements into 
-pseudo-bulks using `mask()`; here, `how` specifies how to do that:
+Next, we can use regions to aggregate cell-level measurements into pseudo-bulks 
+using `mask()` (argument `how` specifies how to do that). Masking will generate 
+an additional genes $\times$ regions `table` in which cell metadata (`colData`) 
+`i/n_instances` are the indices/number of cells contributing to each aggregate,
+and the first observation (column `"0"`) captures data on out-of-region cells.
 
-```{r}
+```{r sosta-bulk-calc}
 sd <- mask(sd, i="cell_boundaries", j="roi", how="sum")
 (pb <- table(sd, "cell_boundaries_by_roi"))
 ```
+
+Structures comprise `r paste(range(pb$n_instances[-1]), collapse="-")` cells
+(`r round(mean(pb$n_instances[-1]))` on average), whereas `r pb$n_instances[1]` 
+cells have not been assigned to any region:
+
+```{r sosta-bulk-show}
+ns <- pb$n_instances
+range(ns[-1]) # per region
+mean(ns[-1])  # on average
+ns[1]         # unassigned
+```
+
+Since we have tracked the indices of cells falling within each region, 
+we can also inspect the composition of these regions in terms of cell types;
+here, using `transferred_cell_type` labels rather than Leiden clusters:
 
 ::: {.column-margin}
 In a multi-section setting, one could for example compare structure-level
 pseudobulks across sections, in terms of differential expression or 
 abundance of cell types (T cell exhaustion, immune infiltration, etc.).
 :::
+
+```{r fig.width=8, fig.height=5}
+#| code-fold: true
+# count clusters by region
+is <- pb$i_instances[-1]            # cell indices by region
+ks <- se$transferred_cell_type      # cell type assignments
+ns <- sapply(is, \(i) table(ks[i]))
+
+# wrangling
+df <- as.data.frame(ns) |>
+    tibble::rownames_to_column("cluster") |>
+    pivot_longer(-cluster, names_to="region", values_to="n_cells")
+
+# plotting
+p0 <- ggplot(df, aes(
+    reorder(region, n_cells),
+    x=n_cells, fill=cluster))
+p1 <- p0 +  
+    geom_col(position="identity") + 
+    labs(x="# cells", y="region") 
+p2 <- p0 +  
+    geom_col(position="fill") + 
+    labs(x="% cells", y="region") 
+
+# arrangement
+wrap_plots(p1, p2, guides="collect") &
+    scale_fill_manual(values=pal) &
+    coord_cartesian(expand=FALSE) &
+    theme_bw() & theme(
+        aspect.ratio=3/2,
+        panel.grid.minor=element_blank(),
+        panel.grid.major.y=element_blank())
+```
 
 ```{r}
 pb <- normalizeRnaCounts.se(pb, 
