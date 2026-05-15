@@ -885,6 +885,13 @@ mean(ns[-1])  # on average
 ns[1]         # unassigned
 ```
 
+While `sosta` has identified `r ncol(pb)-1` regions, we'll filter those that
+comprise at least 10 cells in order to rid ourselves of spurious findings:
+
+```{r}
+pb <- pb[, pb$n_instances >= 10]
+```
+
 Since we have tracked the indices of cells falling within each region, 
 we can also inspect the composition of these regions in terms of cell types;
 here, using `transferred_cell_type` labels rather than Leiden clusters:
@@ -895,7 +902,7 @@ pseudobulks across sections, in terms of differential expression or
 abundance of cell types (T cell exhaustion, immune infiltration, etc.).
 :::
 
-```{r fig.width=8, fig.height=5}
+```{r fig.width=8, fig.height=4}
 #| code-fold: true
 # count clusters by region
 is <- pb$i_instances[-1]            # cell indices by region
@@ -925,7 +932,8 @@ wrap_plots(p1, p2, guides="collect") &
     theme_bw() & theme(
         aspect.ratio=3/2,
         panel.grid.minor=element_blank(),
-        panel.grid.major.y=element_blank())
+        panel.grid.major.y=element_blank(),
+        legend.key.size=unit(2/3, "lines"))
 ```
 
 ```{r}
