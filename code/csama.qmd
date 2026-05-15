@@ -81,7 +81,6 @@ library(ggplot2)
 library(anndataR)
 library(scrapper)
 library(patchwork)
-library(ggnewscale)
 library(reticulate)
 library(SpatialData)
 library(SpatialData.data)
@@ -214,6 +213,14 @@ Going all the way, let's zoom in to a couple cells in order to visualize
 4,000 individual transcript molecules as well; we'll color these by whether
 or not they have been determined to `overlaps_nucleus` (according to 10x):
 
+::: {.column-margin}
+Important `plotPoint` arguments:
+
+- `key` = feature(s) to plot (used further below)
+- `n` = number of points to plot (will downsample at random)
+- optional `ggplot` aesthetics, such as `color`, `alpha`, etc.
+:::
+
 ```{r}
 # crop to 600 x 600 bounding box
 bb <- list(
@@ -249,7 +256,8 @@ plotSpatialData() +
 
 ### Quality Control
 
-Visual inspection is essential. Systematic assessment of transcript-to-cell assignments would, however, require inspection of transcript localization in 
+Visual inspection is essential. Systematic assessment of transcript-to-cell 
+assignments would, however, require inspection of transcript localization in 
 3D across thousands of genes, which is infeasible for modern high-plex panels. 
 `r BiocStyle::Githubpkg("LazDaria/SegTraQ")` provides a collection of metrics 
 for **Seg**mentation and **Tr**anscript **A**ssignment **Q**uality Control. 
@@ -352,9 +360,8 @@ sdata
 `SegTraQ` organizes metrics into six modules. Here, we begin with the baseline 
 (`bl`) module, which computes a set of per-cell and -sample summary statistics 
 such as transcript counts, detected genes, cell area, and gene-wise fraction of 
-unassigned transcripts. 
-Metrics can be computed either individually (e.g., `st.bl.transcripts_per_cell()`), 
-or jointly by running the full `bl` module with `st.run_baseline()`.
+unassigned transcripts. Metrics can be computed either individually (e.g.,
+`st.bl.transcripts_per_cell()`), or jointly by running `st.run_baseline()`.
 
 ```{python segtraq-baseline}
 st = segtraq.SegTraQ(sdata,
@@ -441,8 +448,8 @@ col_celltype = {
 }
 
 # compute per-cell color
-labels = sdata.tables["table"].obs["transferred_cell_type"].unique().astype(str).tolist()
-cols = [col_celltype[lab] for lab in labels]
+labs = sdata.tables["table"].obs["transferred_cell_type"].unique().astype(str).tolist()
+cols = [col_celltype[lab] for lab in labs]
 
 fg, ax = plt.subplots(2, 3, figsize=(14, 8), constrained_layout=True)
 fg.subplots_adjust(wspace=0.5)
@@ -467,7 +474,7 @@ st.sdata.pl.render_shapes(
     element="cell_boundaries",
     color="transferred_cell_type",
     palette=cols,
-    groups=labels,
+    groups=labs,
     method="matplotlib"
 ).pl.show(
     ax=ax[0, 2], 
@@ -1003,9 +1010,9 @@ we can also inspect the composition of these regions in terms of cell types;
 here, using `transferred_cell_type` labels rather than Leiden clusters:
 
 ::: {.column-margin}
-In a multi-section setting, one could for example compare structure-level
-pseudobulks across sections, in terms of differential expression or 
-abundance of cell types (T cell exhaustion, immune infiltration, etc.).
+In a multi-section setting, one could compare structure-level
+pseudobulks across sections, e.g., in terms of differential expression 
+or cell type abundances (T cell exhaustion, immune infiltration, etc.).
 :::
 
 ```{r fig.width=8, fig.height=4}
@@ -1042,7 +1049,7 @@ wrap_plots(p1, p2, guides="collect") &
         legend.key.size=unit(2/3, "lines"))
 ```
 
-In conclusing, we'll look briefly investigate principle components (PCs) 
+In conclusing, we'll briefly investigate the principle components (PCs) 
 of region-level pseudobulks. This allows us to highlight features that drive 
 transcriptional variability between them; note that these are necessarily also 
 affected by compositional differences between regions in terms of cell types.
