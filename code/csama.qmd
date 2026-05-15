@@ -569,11 +569,9 @@ n_gs <- mean(se$gene_count, na.rm=TRUE)
 n_tx <- mean(se$transcript_count, na.rm=TRUE)
 p_tx <- metadata(se)$perc_unassigned_transcripts
 
-df <- data.frame(
-    x=c("# cells", "μ(# genes)", "μ(# transcripts)", "% unassigned"),
-    y=format(round(c(ncol(se), n_gs, n_tx, p_tx), 2), digits=2))
-
-cat(sprintf("%-18s %10s\n", df$metric, df$value), sep="")
+data.frame(
+    metric=c("# cells", "μ(# genes)", "μ(# transcripts)", "% unassigned"),
+    value=round(c(ncol(se), n_gs, n_tx, p_tx), 2))
 ```
 
 - Around `r round(p_tx, 1)`% of transcripts were not assigned to any cell. 
