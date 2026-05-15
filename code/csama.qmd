@@ -1,3 +1,12 @@
+---
+author:
+  - name: Helena L. Crowell
+    affiliation: CNAG, Barcelona, Spain
+  - name: Daria Lazic
+    affiliation: EMBL, Heidelberg, Germany
+date: "`r format(Sys.Date(), '%B %d, %Y')`"
+---
+
 ## CSAMA
 
 In this demo, we'll be analyzing 5K-plex Xenium (10x Genomics) 
@@ -633,7 +642,7 @@ which would explain why little or no contamination from them is being detected.
 - About 19% of myoepithelial cells appear to be contaminated by DCIS2 cells, 
 which are common spatial neighbors. 3% of T cells are contaminated by B cells. 
 
-```{r plt-contamination-heatmap, fig.height=4}
+```{r plt-contamination-heatmap, fig.height=3.5}
 #| code-fold: true
 md <- metadata(table(sd))
 mx <- md$negative_marker_contamination_binary
@@ -651,9 +660,9 @@ df <- mx |>
 ggplot(df, aes(
     target_cell_type, source_cell_type, fill=contamination)) + geom_tile() + 
     scale_fill_gradient(low="white", high="red", na.value="lightgrey") +
-    geom_text(
-        aes(label=sprintf("%.2f", contamination)), 
-        filter(df, !is.na(df$contamination)), size=2) +
+    geom_text(size=3,
+        aes(label=round(100*contamination)), 
+        filter(df, !is.na(df$contamination))) +
     coord_equal(expand=FALSE) +
     theme_bw() + theme(
         panel.grid=element_blank(),
@@ -693,10 +702,18 @@ plotSpatialData() +
     ggtitle("MS4A1 transcripts in T/B cells")
 ```
 
-Let's evaluate this with `SegTraQ`, which provides the point statistics (`ps`) module to quantify
-subcellular transcript distributions within cells. For example, we can
-compute transcript distances to the cell membrane either across all genes
-and cells or for selected genes and cell types. For this, let's briefly jump back into Python.
+Let's evaluate this with `SegTraQ`, which provides the point statistics (`ps`) 
+module to quantify subcellular transcript distributions within cells. E.g., we 
+can compute transcript-to-membrane distances either across genes and cells, or 
+for selected genes and cell types. For this, we briefly jump back into Python.
+
+::: {.column-margin}
+Briefly, `st.ps.distance_to_membrane` quantifies transcript localization 
+*relative* to cellular boundaries (e.g., nucleus or membrane) by computing 
+distances of all transcripts to their reference polygon, normalizing for cell
+area, and reporting the average boundary distance for each transcript species.
+(Note: negative distances reflect localization *outside* of a cell's polygon.)
+:::
 
 ```{python ps-module}
 _ = st.ps.distance_to_membrane(
@@ -818,6 +835,95 @@ plotSpatialData() +
 
 ### Downstream
 
+#### Colocalization
+
+A common step in spatial omics data analysis is to evaluate the colocalization 
+of cell types. This can be done using a variety of tools; for dydactic purposes,
+we'll do in manually here by i) using the `r BiocStyle::CRANpkg("RANN")` to 
+identify nearest neighbors (NNs) in a radial neighborhood around each cell; 
+and ii) quantifying the relative abundance of cell types around each cell type.
+
+```{r rann, message=FALSE, warning=FALSE}
+library(RANN)
+```
+
+For such type of analysis, it's important to get a sense of how many neighbors 
+are typically found within a given radius; this can help decide on a meaningful 
+distance threshold to use for colocalization analysis.
+
+```{r, warning=FALSE}
+# get spatial coordinates
+xy <- centroids(SpatialData::transform(shape(sd)))
+# get cells in radial neighborhood of 100 units
+nn <- nn2(xy, searchtype="radius", r=100, k=31) 
+is <- nn$nn.idx[, -1]   # exclude self
+ns <- rowSums(is > 0)   # number of NNs
+summary(ns)
+```
+
+Here, we find that cells have `r paste(range(ns), collapse="-")` neighbors 
+(`r round(mean(ns))` on average) within a radius of 100 units. This seems
+adequeate enough to capture local neighborhoods without being too large.
+
+We can now quantify the relative subpopulation composition around each cell,
+and summarize this at the cluster level to get a sense of which cell types 
+tend to attract/avoid one another.
+
+```{r colo-calc, warning=FALSE}
+# quantify cell type frequencies in neighborhood
+is[is == 0] <- NA
+ks <- factor(se$transferred_cell_type)
+mx <- matrix(ks[is], nrow=ncol(se))
+df <- lapply(levels(ks), \(k) {
+    p <- rowMeans(mx == k, na.rm=TRUE)
+    data.frame(i=ks, j=k, p)
+}) |> do.call(what=rbind)
+head(df)
+```
+
+```{r colo-plot, fig.height=3.5}
+#| code-fold: true
+# score colocalization between cell types
+# (average & z-scale by target cell type)
+fd <- df |>
+    filter(!is.na(i)) |> group_by(i, j) |>
+    summarise_at("p", mean, na.rm=TRUE) |>
+    group_by(j) |> mutate_at("p", base::scale)
+
+# hierarchical clustering of cell types 
+# based on colocalization patterns
+mx <- pivot_wider(fd, names_from="i", values_from="p")
+hc <- hclust(dist(as.matrix(mx[, -1])))
+xo <- mx$j[hc$order]
+
+ggplot(fd, aes(i, j, fill=p)) + geom_tile() +
+    scale_fill_gradient2(NULL, low="blue", high="red") +
+    ggtitle(paste0(
+        "z-scaled frequency of X\n",
+        "in radial neighborhood Y")) +
+    scale_y_discrete(limits=xo) +
+    scale_x_discrete(limits=xo) +
+    coord_equal(expand=FALSE) +
+    theme_bw() + theme(
+        axis.title=element_blank(),
+        legend.key.height=unit(1, "lines"),
+        legend.key.width=unit(.5, "lines"),
+        plot.title=element_text(hjust=0.5),
+        axis.text.x=element_text(angle=45, hjust=1))
+```
+
+We can observe ~3 colocalization modules, namely: an immune module (T, B, DC),
+a tumor/stromal module (DCIS1/2, tumor, myoepithelia), and a stromal/myeloid 
+module (mast, macrophages, endothelial -EC- and perivascular -PV- cells). 
+Within this latter module, EC/PV are especially attraced to one another. 
+
+::: {.column-margin}
+EC/PV attraction is consistent with the fact that EC line the interior of 
+blood vessels, while PV (pericytes and smooth muscle cells) envelop them.
+Together, they form a functional unit for tissue homeostasis, providing 
+stability and helping regulate blood vessles formation and permability.
+:::
+
 #### Structures
 
 The R/Bioconductor package `r BiocStyle::Biocpkg("sosta")` [@Gunz2025-sosta]
@@ -827,7 +933,7 @@ delineating spatial structures based on a threshold on cellular 'intensity'.
 [Structures could, for example, represent germinal centers (GC) in tonsil, 
 metastases or tertiary lymphoid structures (TLS) in cancer, etc.]{.aside}
 
-```{r message=FALSE, warning=FALSE}
+```{r sosta, message=FALSE, warning=FALSE}
 library(sosta)
 library(spatstat.geom)
 ```
@@ -936,24 +1042,28 @@ wrap_plots(p1, p2, guides="collect") &
         legend.key.size=unit(2/3, "lines"))
 ```
 
+In conclusing, we'll look briefly investigate principle components (PCs) 
+of region-level pseudobulks. This allows us to highlight features that drive 
+transcriptional variability between them; note that these are necessarily also 
+affected by compositional differences between regions in terms of cell types.
+
 ```{r}
+# library-size normalization
 pb <- normalizeRnaCounts.se(pb, 
     log=FALSE, 
     assay.type="sum",
     output.name="normcounts")
-pc <- runPca(assay(pb, "normcounts"))
-```
 
-```{r}
+# principal component analysis (PCA)
+pc <- runPca(assay(pb, "normcounts"))
+
 # top-loaded features for PCs 1-3
 apply(pc$rotation[, 1:3], 2, \(.) {
     . <- sort(abs(.), decreasing=TRUE)
     head(names(.), 10)
 })
-```
 
-```{r}
-#| code-fold: true
+# visualize exemplary feature spatially
 plotSpatialData() + 
     plotShape(sd, col=NA, fill="XBP1", assay="logcounts") +
     scale_fill_gradientn(colors=rev(hcl.colors(9, "Roma")))
@@ -962,7 +1072,7 @@ plotSpatialData() +
 AI tells us *"X-box binding protein 1 (XBP1) is a key transcription factor, 
 activated by the IRE1/XBP1 branch of the Unfolded Protein Response (UPR), 
 which promotes breast cancer development, progression, and resistance to 
-therapy."*; so let's believe that and be proud.
+therapy."*; so let's believe that makes sense, be proud, and leave it here.
 
 ### appendix
 
