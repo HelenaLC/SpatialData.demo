@@ -888,6 +888,18 @@ df <- lapply(levels(ks), \(k) {
 head(df)
 ```
 
+We can observe ~3 colocalization modules, namely: an immune module (T, B, DC),
+a tumor/stromal module (DCIS1/2, tumor, myoepithelia), and a stromal/myeloid 
+module (mast, macrophages, endothelial -EC- and perivascular -PV- cells). 
+Within this latter module, EC/PV are especially attraced to one another. 
+
+::: {.column-margin}
+EC/PV attraction is consistent with the fact that EC line the interior of 
+blood vessels, while PV (pericytes and smooth muscle cells) envelop them.
+Together, they form a functional unit for tissue homeostasis, providing 
+stability and helping regulate blood vessles formation and permability.
+:::
+
 ```{r colo-plot, fig.height=3.5}
 #| code-fold: true
 # score colocalization between cell types
@@ -918,18 +930,6 @@ ggplot(fd, aes(i, j, fill=p)) + geom_tile() +
         plot.title=element_text(hjust=0.5),
         axis.text.x=element_text(angle=45, hjust=1))
 ```
-
-We can observe ~3 colocalization modules, namely: an immune module (T, B, DC),
-a tumor/stromal module (DCIS1/2, tumor, myoepithelia), and a stromal/myeloid 
-module (mast, macrophages, endothelial -EC- and perivascular -PV- cells). 
-Within this latter module, EC/PV are especially attraced to one another. 
-
-::: {.column-margin}
-EC/PV attraction is consistent with the fact that EC line the interior of 
-blood vessels, while PV (pericytes and smooth muscle cells) envelop them.
-Together, they form a functional unit for tissue homeostasis, providing 
-stability and helping regulate blood vessles formation and permability.
-:::
 
 #### Structures
 
