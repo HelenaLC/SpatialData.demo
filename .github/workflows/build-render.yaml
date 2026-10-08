@@ -48,6 +48,9 @@ jobs:
     - uses: r-lib/actions/setup-renv@v2
 
     - uses: quarto-dev/quarto-actions/render@v2
+      env:
+        # Required by SpatialData.data. Report as a bug?
+        AWS_REGION: us-east-1
 
     - uses: quarto-dev/quarto-actions/publish@v2
       env:
