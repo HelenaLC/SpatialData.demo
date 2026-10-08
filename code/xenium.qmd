@@ -14,7 +14,7 @@ library(SingleCellExperiment)
 ```
 
 ```{r load-data}
-(sd <- JanesickBreastXeniumRep1())
+(sd <- SD.data_load("JanesickBreastXeniumRep1"))
 ```
 
 ### analysis
