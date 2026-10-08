@@ -15,7 +15,7 @@ library(SingleCellExperiment)
 
 ```{r load-data}
 # load & simplify naming
-sd <- MouseIntestineVisHD()
+sd <- SD.data_load("MouseIntestineVisHD")
 pat <- "Visium_HD_Mouse_Small_Intestine_"
 imageNames(sd) <- gsub(pat, "", imageNames(sd))
 shapeNames(sd) <- gsub(pat, "bin_", shapeNames(sd))
