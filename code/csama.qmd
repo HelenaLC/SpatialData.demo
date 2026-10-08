@@ -33,6 +33,13 @@ These include the following elements:
 #### Dataset
 
 A size-reduced example dataset has been deposited on Zenodo. 
+
+```{r set-timeout}
+# Zenodo can be a bit slow and the dataset is large so we increase the timeout
+old_timeout <- options(timeout=600)
+on.exit(options(old_timeout))
+```
+
 We'll retrieve the compressed `SpatialData` *.zarr* store together 
 with a reference scRNA-seq dataset in *.h5ad* format [@Janesick2023], 
 decompress both archives, and stash their on-disk file paths for later:
