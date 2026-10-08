@@ -5,6 +5,14 @@ author:
 date: "`r format(Sys.Date(), '%B %d, %Y')`"
 ---
 
+```{r}
+#| echo: false
+# FIXME: start rendering this example again after the addCT() issue has been fixed
+knitr::opts_chunk$set(
+    eval = FALSE
+)
+```
+
 ## preamble
 
 ### dependencies
