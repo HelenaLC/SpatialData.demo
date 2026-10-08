@@ -1,4 +1,5 @@
 ---
+title: "Fractal"
 author:
   - name: Helena L Crowell
     affiliation: CNAG, Barcelona, Spain
@@ -11,8 +12,6 @@ date: "`r format(Sys.Date(), '%B %d, %Y')`"
 #| echo: false
 options(timeout=1000)
 ```
-
-## Fractal
 
 In this demo we will work with an example data set consisting of human induced 
 pluripotent stem cells, imaged at 40x magnification with a Yokogawa CV7000 
@@ -117,16 +116,16 @@ ggplot(df, aes(x=meanDAPI)) +
 pal <- sample(colors(), ncol(table(sd)), replace=TRUE)
 
 # only image
-a <- plotSpatialData() + 
-    plotImage(sd) 
+a <- plotSpatialData(sd, ct="global") + 
+    plotImage() 
 # only labels
-b <- plotSpatialData() + 
-    plotLabel(sd, c="id", pal=pal, a=2/3) + 
+b <- plotSpatialData(sd, ct="global") + 
+    plotLabel(c="id", pal=pal, a=2/3) + 
     theme(legend.position="none")
 # image + labels
-c <- plotSpatialData() + 
-    plotImage(sd) +
-    plotLabel(sd, c="id", pal=pal, a=2/3) +
+c <- plotSpatialData(sd, ct="global") + 
+    plotImage() +
+    plotLabel(c="id", pal=pal, a=2/3) +
     theme(legend.position="none")
 wrap_plots(a, b, c, ncol=1)
 ```
@@ -135,10 +134,10 @@ wrap_plots(a, b, c, ncol=1)
 
 ```{r fig-scalebar, fig.width=6, fig.height=3}
 # values are uint16 - scale contrast limits by maximum value (2^16-1)
-plotSpatialData() + 
-    plotImage(sd, cl=list(c(100, 600)/65535)) +
+plotSpatialData(sd) + 
+    plotImage(cl=list(c(100, 600)/65535)) +
     scalebar(image(sd), len=150, col="yellow", xrel=0.05, yrel=0.95) + 
-    ggtitle("cardio-d14")
+    labs(title="cardio-d14")
 ```
 
 ## Zoom in
@@ -163,18 +162,18 @@ table(sd, 2)$id <- seq(ncol(table(sd, 2)))
 We can visualize the image with overlaid labels cropped to the same bounding box.
 
 ```{r fig-bb-same}
-plotSpatialData() + 
-    plotImage(sd, "image_bbSmall") +
-    plotLabel(sd, "cells_bbSmall", c="id", pal=pal, a=2/3) +
+plotSpatialData(sd) + 
+    plotImage(i="image_bbSmall") +
+    plotLabel(i="cells_bbSmall", c="id", pal=pal, a=2/3) +
     theme(legend.position="none")
 ```
 
 We can also use different bounding boxes for the image and labels.
 
 ```{r fig-bb-diff}
-plotSpatialData() + 
-    plotImage(sd, "image_bbLarge") +
-    plotLabel(sd, "cells_bbSmall", pal="red", a=2/3)
+plotSpatialData(sd) + 
+    plotImage(i="image_bbLarge") +
+    plotLabel(i="cells_bbSmall", pal="red", a=2/3)
 ```
 
 ## Use a lower resolution
@@ -183,12 +182,12 @@ We can plot a lower-resolution pyramid level by setting the `k` argument to
 `plotImage()`.
 
 ```{r fig-res}
-a <- plotSpatialData() + 
-    plotImage(sd, "image_bbSmall", k=1) + 
-    ggtitle("High resolution")
-b <- plotSpatialData() + 
-    plotImage(sd, "image_bbSmall", k=5) + 
-    ggtitle("Low resolution")
+a <- plotSpatialData(sd) + 
+    plotImage(i="image_bbSmall", k=1) + 
+    labs(title="High resolution")
+b <- plotSpatialData(sd) + 
+    plotImage(i="image_bbSmall", k=5) + 
+    labs(title="Low resolution")
 wrap_plots(a, b, nrow=1)
 ```
 
@@ -202,9 +201,9 @@ xy <- centroids(label(sd, "cells_bbSmall"))
 # random subset for demonstration purposes
 .xy <- xy[sample(nrow(xy), 99), ]
 
-plotSpatialData() + 
-    plotImage(sd, "image_bbSmall", k=1) +
-    plotLabel(sd, "cells_bbSmall", c="id", pal=pal, a=2/3) +
+plotSpatialData(sd) + 
+    plotImage(i="image_bbSmall", k=1) +
+    plotLabel(i="cells_bbSmall", c="id", pal=pal, a=2/3) +
     geom_text(aes(x, y, label=i), data=.xy, color="white", size=3) +
     theme(legend.position="none")
 ```
@@ -218,9 +217,9 @@ pt <- st_as_sf(ci, coords=c("x", "y"))
 bb <- st_bbox(st_buffer(pt, dist=10))
 sp <- crop(sd, bb)
 
-plotSpatialData() + 
-    plotImage(sp) +
-    plotLabel(sp, c="id", pal=pal, a=2/3) +
+plotSpatialData(sp) + 
+    plotImage() +
+    plotLabel(c="id", pal=pal, a=2/3) +
     geom_text(aes(x, y, label=i), data=ci, color="white", size=12) +
     theme(legend.position="none")
 ```
@@ -269,8 +268,8 @@ sapply(assays(se), as.vector)
 ```
 
 ```{r plot-time-data}
-plotSpatialData() + 
-    plotImage(sdt, i="image", t=1) + 
+plotSpatialData(sdt) + 
+    plotImage(i="image", t=1) + 
     scalebar(image(sdt), len=150, col="purple") + 
     theme_void() + theme(legend.position="none")
 ```
@@ -283,8 +282,8 @@ write a .gif, and display it using R Markdown syntax `![](x.gif)` (not shown):
 # plot each timepoint
 ts <- seq_len(dim(image(sdt))[1])
 ps <- lapply(ts, \(t) {
-    plotSpatialData() + 
-        plotImage(sdt, i="image", t=t) +
+    plotSpatialData(sdt) + 
+        plotImage(i="image", t=t) +
         annotate("text",
             x=Inf, y=Inf, hjust=1.2, vjust=-0.8, 
             label=paste("t =", t), size=5, col="yellow") +
