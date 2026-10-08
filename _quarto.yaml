@@ -1,6 +1,6 @@
 execute: 
   cache: false
-  freeze: false
+  freeze: auto
   message: false
   warning: false
 
