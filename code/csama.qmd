@@ -91,7 +91,7 @@ library(anndataR)
 library(scrapper)
 library(patchwork)
 library(reticulate)
-library(SpatialData)
+library(spatialdataR)
 library(SpatialData.data)
 library(SpatialData.plot)
 library(SingleCellExperiment)
@@ -878,7 +878,7 @@ search, it is typically set much lower in order to reduce computational effort.
 
 ```{r, warning=FALSE}
 # get spatial coordinates
-xy <- centroids(SpatialData::transform(shape(sd)))
+xy <- centroids(spatialdataR::transform(shape(sd)))
 
 # get cells in radial neighborhood
 nn <- nn2(xy, searchtype="radius", r=r <- 100, k=k <- 51) 
@@ -991,7 +991,7 @@ to align with the coordinate space shared between all elements; alternatively,
 this could be done after reconstruction of spatial structures.]{.align}
 
 ```{r sosta-ppp, warning=FALSE}
-xy <- centroids(SpatialData::transform(shape(sd)))
+xy <- centroids(spatialdataR::transform(shape(sd)))
 ow <- owin(xrange=range(xy[, 1]), yrange=range(xy[, 2]))
 pp <- ppp(x=xy[, 1], y=xy[, 2], window=ow, marks=se$clusters)
 ```
