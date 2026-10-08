@@ -607,43 +607,6 @@
       "Maintainer": "Brian Ripley <Brian.Ripley@R-project.org>",
       "Repository": "CRAN"
     },
-    "MASS": {
-      "Package": "MASS",
-      "Version": "7.3-66",
-      "Source": "Repository",
-      "Priority": "recommended",
-      "Date": "2026-07-15",
-      "Revision": "$Rev: 3693 $",
-      "Depends": [
-        "R (>= 4.4.0)",
-        "grDevices",
-        "graphics",
-        "stats",
-        "utils"
-      ],
-      "Imports": [
-        "methods"
-      ],
-      "Suggests": [
-        "lattice",
-        "nlme",
-        "nnet",
-        "survival"
-      ],
-      "Authors@R": "c(person(\"Brian\", \"Ripley\", role = c(\"aut\", \"cre\", \"cph\"), email = \"Brian.Ripley@R-project.org\"), person(\"Bill\", \"Venables\", role = c(\"aut\", \"cph\")), person(c(\"Douglas\", \"M.\"), \"Bates\", role = \"ctb\"), person(\"Kurt\", \"Hornik\", role = \"trl\", comment = \"partial port ca 1998\"), person(\"Albrecht\", \"Gebhardt\", role = \"trl\", comment = \"partial port ca 1998\"), person(\"David\", \"Firth\", role = \"ctb\", comment = \"support functions for polr\"))",
-      "Description": "Functions and datasets to support Venables and Ripley, \"Modern Applied Statistics with S\" (4th edition, 2002).",
-      "Title": "Support Functions and Datasets for Venables and Ripley's MASS",
-      "LazyData": "yes",
-      "ByteCompile": "yes",
-      "License": "GPL-2 | GPL-3",
-      "URL": "http://www.stats.ox.ac.uk/pub/MASS4/",
-      "Contact": "<MASS@stats.ox.ac.uk>",
-      "NeedsCompilation": "yes",
-      "Author": "Brian Ripley [aut, cre, cph], Bill Venables [aut, cph], Douglas M. Bates [ctb], Kurt Hornik [trl] (partial port ca 1998), Albrecht Gebhardt [trl] (partial port ca 1998), David Firth [ctb] (support functions for polr)",
-      "Maintainer": "Brian Ripley <Brian.Ripley@R-project.org>",
-      "Repository": "RSPM",
-      "Encoding": "UTF-8"
-    },
     "Matrix": {
       "Package": "Matrix",
       "Version": "1.7-6",
@@ -1458,7 +1421,7 @@
     },
     "SpatialData.plot": {
       "Package": "SpatialData.plot",
-      "Version": "0.99.7",
+      "Version": "0.99.8",
       "Source": "GitHub",
       "Title": "SpatialData visualization",
       "Depends": [
@@ -1466,48 +1429,46 @@
         "spatialdataR"
       ],
       "Description": "Visualization suit for 'spatialdataR'. Current functionality  includes handling of multiscale 'images', visualizing 'labels', 'points',  and 'shapes'. For the latter, POINT, POLYGON, and MULTIPOLYGON geometries  are supported. For all but 'images', there is support to pass information  from annotation 'tables' as aesthetics (e.g., 'colData' or 'assay' data).",
-      "Authors@R": "c( person(\"Helena L.\", \"Crowell\",  role=c(\"aut\", \"cre\"), email=\"helena@crowell.eu\",  comment=c(ORCID=\"0000-0002-4801-1767\")), person(\"Artür\", \"Manukyan\", role=c(\"aut\"), email=\"artur-man@hotmail.com\", comment=c(ORCID=\"0000-0002-0441-9517\")), person(\"Hugo\", \"Gruson\", role=c(\"aut\"), email=\"charlotte.soneson@fmi.ch\", comment=c(ORCID=\"0000-0002-4094-1476\")), person(\"Vince\", \"Carey\", role=c(\"aut\"), email=\"stvjc@channing.harvard.edu\", comment=c(ORCID=\"0000-0003-4046-0063\")))",
+      "Authors@R": "c( person(\"Helena L.\", \"Crowell\",  role=c(\"aut\", \"cre\"), email=\"helena@crowell.eu\",  comment=c(ORCID=\"0000-0002-4801-1767\")), person(\"Artür\", \"Manukyan\", role=c(\"aut\"), email=\"artur-man@hotmail.com\", comment=c(ORCID=\"0000-0002-0441-9517\")), person(\"Hugo\", \"Gruson\", role=c(\"aut\"), email=\"hugo.gruson@embl.de\", comment=c(ORCID=\"0000-0002-4094-1476\")), person(\"Charlotte\", \"Soneson\", role=c(\"aut\"), email=\"charlotte.soneson@fmi.ch\", comment=c(ORCID=\"0000-0003-3833-2169\")), person(\"Michael\", \"Stadler\", role=c(\"aut\"), email=\"michael.stadler@fmi.ch\", comment=c(ORCID=\"0000-0002-2269-4934\")), person(\"Vince\", \"Carey\", role=c(\"aut\"), email=\"stvjc@channing.harvard.edu\", comment=c(ORCID=\"0000-0003-4046-0063\")))",
       "Imports": [
-        "DelayedArray",
+        "BiocGenerics",
         "dplyr",
         "farver",
-        "ggplot2",
-        "ggforce",
+        "ggnewscale",
+        "ggplot2 (>= 4.0.0)",
         "MatrixGenerics",
         "methods",
         "rlang",
         "sf",
-        "S4Vectors",
-        "SingleCellExperiment"
+        "S4Vectors"
       ],
       "Suggests": [
         "BiocStyle",
-        "ggnewscale",
+        "DelayedArray",
         "knitr",
         "magick",
         "patchwork",
-        "SpatialData.data",
+        "SingleCellExperiment",
         "testthat",
         "vdiffr",
         "ZarrArray"
       ],
-      "Remotes": "HelenaLC/spatialdataR, HelenaLC/SpatialData.data",
       "biocViews": "Spatial, SingleCell, Visualization, Infrastructure, ImmunoOncology, GeneExpression, Transcriptomics",
       "License": "Artistic-2.0",
       "Encoding": "UTF-8",
       "VignetteBuilder": "knitr",
       "URL": "https://github.com/HelenaLC/SpatialData.plot",
       "BugReports": "https://github.com/HelenaLC/SpatialData.plot/issues",
-      "Config/roxygen2/version": "8.0.0",
+      "Config/roxygen2/version": "8.1.0",
       "RemoteType": "github",
       "RemoteHost": "api.github.com",
-      "RemoteRepo": "spatialdata.plot",
+      "RemoteRepo": "SpatialData.plot",
       "RemoteUsername": "HelenaLC",
-      "RemotePkgRef": "HelenaLC/spatialdata.plot",
+      "RemotePkgRef": "HelenaLC/SpatialData.plot",
       "RemoteRef": "HEAD",
-      "RemoteSha": "8ecad1a7ac995c2786927699805e8524bb98caae",
+      "RemoteSha": "8e7b7816b8ca21dcebb38629c708a0b5f673a0bd",
       "NeedsCompilation": "no",
-      "Author": "Helena L. Crowell [aut, cre] (ORCID: <https://orcid.org/0000-0002-4801-1767>), Artür Manukyan [aut] (ORCID: <https://orcid.org/0000-0002-0441-9517>), Hugo Gruson [aut] (ORCID: <https://orcid.org/0000-0002-4094-1476>), Vince Carey [aut] (ORCID: <https://orcid.org/0000-0003-4046-0063>)",
+      "Author": "Helena L. Crowell [aut, cre] (ORCID: <https://orcid.org/0000-0002-4801-1767>), Artür Manukyan [aut] (ORCID: <https://orcid.org/0000-0002-0441-9517>), Hugo Gruson [aut] (ORCID: <https://orcid.org/0000-0002-4094-1476>), Charlotte Soneson [aut] (ORCID: <https://orcid.org/0000-0003-3833-2169>), Michael Stadler [aut] (ORCID: <https://orcid.org/0000-0002-2269-4934>), Vince Carey [aut] (ORCID: <https://orcid.org/0000-0003-4046-0063>)",
       "Maintainer": "Helena L. Crowell <helena@crowell.eu>"
     },
     "SpatialExperiment": {
@@ -3166,56 +3127,30 @@
       "Maintainer": "Dewey Dunnington <dewey@dunnington.ca>",
       "Repository": "RSPM"
     },
-    "ggforce": {
-      "Package": "ggforce",
-      "Version": "0.5.0",
+    "ggnewscale": {
+      "Package": "ggnewscale",
+      "Version": "0.5.2",
       "Source": "Repository",
-      "Type": "Package",
-      "Title": "Accelerating 'ggplot2'",
-      "Authors@R": "c(person(given = \"Thomas Lin\", family = \"Pedersen\", role = c(\"cre\", \"aut\"), email = \"thomasp85@gmail.com\", comment = c(ORCID = \"0000-0002-5147-4711\")), person(\"RStudio\", role = \"cph\"))",
-      "Maintainer": "Thomas Lin Pedersen <thomasp85@gmail.com>",
-      "Description": "The aim of 'ggplot2' is to aid in visual data investigations. This focus has led to a lack of facilities for composing specialised plots. 'ggforce' aims to be a collection of mainly new stats and geoms that fills this gap. All additional functionality is aimed to come through the official extension system so using 'ggforce' should be a stable experience.",
-      "URL": "https://ggforce.data-imaginist.com, https://github.com/thomasp85/ggforce",
-      "BugReports": "https://github.com/thomasp85/ggforce/issues",
-      "License": "MIT + file LICENSE",
+      "Language": "en-GB",
+      "Title": "Multiple Fill and Colour Scales in 'ggplot2'",
+      "Authors@R": "person(given = \"Elio\", family = \"Campitelli\", role = c(\"cre\", \"aut\"), email = \"eliocampitelli@gmail.com\", comment = c(ORCID = \"0000-0002-7742-9230\"))",
+      "Description": "Use multiple fill and colour scales in 'ggplot2'.",
+      "License": "GPL-3",
+      "URL": "https://eliocamp.github.io/ggnewscale/, https://github.com/eliocamp/ggnewscale",
+      "BugReports": "https://github.com/eliocamp/ggnewscale/issues",
       "Encoding": "UTF-8",
-      "Depends": [
-        "ggplot2 (>= 3.5.0)",
-        "R (>= 3.3.0)"
-      ],
       "Imports": [
-        "grid",
-        "scales",
-        "MASS",
-        "tweenr (>= 0.1.5)",
-        "gtable",
-        "rlang",
-        "polyclip",
-        "stats",
-        "grDevices",
-        "tidyselect",
-        "withr",
-        "utils",
-        "lifecycle",
-        "cli",
-        "vctrs",
-        "systemfonts"
+        "ggplot2 (>= 3.5.0)"
       ],
       "RoxygenNote": "7.3.2",
-      "LinkingTo": [
-        "cpp11"
-      ],
       "Suggests": [
-        "sessioninfo",
-        "deldir",
-        "latex2exp",
-        "reshape2",
-        "units (>= 0.8.0)",
+        "testthat",
+        "vdiffr",
         "covr"
       ],
-      "Collate": "'aaa.R' 'shape.R' 'arc_bar.R' 'arc.R' 'autodensity.R' 'autohistogram.R' 'autopoint.R' 'bezier.R' 'bspline.R' 'bspline_closed.R' 'circle.R' 'concaveman.R' 'cpp11.R' 'diagonal.R' 'diagonal_wide.R' 'ellipse.R' 'errorbar.R' 'facet_grid_paginate.R' 'facet_matrix.R' 'facet_row.R' 'facet_stereo.R' 'facet_wrap_paginate.R' 'facet_zoom.R' 'ggforce-package.R' 'ggproto-classes.R' 'interpolate.R' 'labeller.R' 'link.R' 'mark_circle.R' 'mark_ellipse.R' 'mark_hull.R' 'mark_label.R' 'mark_rect.R' 'parallel_sets.R' 'position-jitternormal.R' 'position_auto.R' 'position_floatstack.R' 'regon.R' 'scale-depth.R' 'scale-unit.R' 'sina.R' 'spiro.R' 'themes.R' 'trans.R' 'trans_linear.R' 'utilities.R' 'voronoi.R' 'zzz.R'",
-      "NeedsCompilation": "yes",
-      "Author": "Thomas Lin Pedersen [cre, aut] (ORCID: <https://orcid.org/0000-0002-5147-4711>), RStudio [cph]",
+      "NeedsCompilation": "no",
+      "Author": "Elio Campitelli [cre, aut] (ORCID: <https://orcid.org/0000-0002-7742-9230>)",
+      "Maintainer": "Elio Campitelli <eliocampitelli@gmail.com>",
       "Repository": "RSPM"
     },
     "ggplot2": {
@@ -5606,54 +5541,6 @@
       "Maintainer": "Jeroen Ooms <jeroenooms@gmail.com>",
       "Repository": "RSPM"
     },
-    "systemfonts": {
-      "Package": "systemfonts",
-      "Version": "1.3.2",
-      "Source": "Repository",
-      "Type": "Package",
-      "Title": "System Native Font Finding",
-      "Authors@R": "c( person(\"Thomas Lin\", \"Pedersen\", , \"thomas.pedersen@posit.co\", role = c(\"aut\", \"cre\"), comment = c(ORCID = \"0000-0002-5147-4711\")), person(\"Jeroen\", \"Ooms\", , \"jeroen@berkeley.edu\", role = \"aut\", comment = c(ORCID = \"0000-0002-4035-0289\")), person(\"Devon\", \"Govett\", role = \"aut\", comment = \"Author of font-manager\"), person(\"Posit Software, PBC\", role = c(\"cph\", \"fnd\"), comment = c(ROR = \"03wc8by49\")) )",
-      "Description": "Provides system native access to the font catalogue. As font handling varies between systems it is difficult to correctly locate installed fonts across different operating systems. The 'systemfonts' package provides bindings to the native libraries on Windows, macOS and Linux for finding font files that can then be used further by e.g. graphic devices. The main use is intended to be from compiled code but 'systemfonts' also provides access from R.",
-      "License": "MIT + file LICENSE",
-      "URL": "https://github.com/r-lib/systemfonts, https://systemfonts.r-lib.org",
-      "BugReports": "https://github.com/r-lib/systemfonts/issues",
-      "Depends": [
-        "R (>= 3.2.0)"
-      ],
-      "Imports": [
-        "base64enc",
-        "grid",
-        "jsonlite",
-        "lifecycle",
-        "tools",
-        "utils"
-      ],
-      "Suggests": [
-        "covr",
-        "farver",
-        "ggplot2",
-        "graphics",
-        "knitr",
-        "ragg",
-        "rmarkdown",
-        "svglite",
-        "testthat (>= 2.1.0)"
-      ],
-      "LinkingTo": [
-        "cpp11 (>= 0.2.1)"
-      ],
-      "VignetteBuilder": "knitr",
-      "Config/build/compilation-database": "true",
-      "Config/Needs/website": "tidyverse/tidytemplate",
-      "Config/usethis/last-upkeep": "2025-04-23",
-      "Encoding": "UTF-8",
-      "RoxygenNote": "7.3.2",
-      "SystemRequirements": "fontconfig, freetype2",
-      "NeedsCompilation": "yes",
-      "Author": "Thomas Lin Pedersen [aut, cre] (ORCID: <https://orcid.org/0000-0002-5147-4711>), Jeroen Ooms [aut] (ORCID: <https://orcid.org/0000-0002-4035-0289>), Devon Govett [aut] (Author of font-manager), Posit Software, PBC [cph, fnd] (ROR: <https://ror.org/03wc8by49>)",
-      "Maintainer": "Thomas Lin Pedersen <thomas.pedersen@posit.co>",
-      "Repository": "RSPM"
-    },
     "tensor": {
       "Package": "tensor",
       "Version": "1.5.1",
@@ -5913,40 +5800,6 @@
       "NeedsCompilation": "no",
       "Author": "Yihui Xie [aut, cre, cph] (ORCID: <https://orcid.org/0000-0003-0645-5666>), Posit Software, PBC [cph, fnd], Christophe Dervieux [ctb] (ORCID: <https://orcid.org/0000-0003-4474-2498>), Devon Ryan [ctb] (ORCID: <https://orcid.org/0000-0002-8549-0971>), Ethan Heinzen [ctb], Fernando Cagua [ctb]",
       "Maintainer": "Yihui Xie <xie@yihui.name>",
-      "Repository": "RSPM"
-    },
-    "tweenr": {
-      "Package": "tweenr",
-      "Version": "2.0.3",
-      "Source": "Repository",
-      "Type": "Package",
-      "Title": "Interpolate Data for Smooth Animations",
-      "Authors@R": "c(person(given = \"Thomas Lin\", family = \"Pedersen\", role = c(\"aut\", \"cre\"), email = \"thomasp85@gmail.com\", comment = c(ORCID = \"0000-0002-5147-4711\")))",
-      "Maintainer": "Thomas Lin Pedersen <thomasp85@gmail.com>",
-      "Description": "In order to create smooth animation between states of data, tweening is necessary. This package provides a range of functions for creating tweened data that can be used as basis for animation. Furthermore  it adds a number of vectorized interpolaters for common R data  types such as numeric, date and colour.",
-      "URL": "https://github.com/thomasp85/tweenr",
-      "BugReports": "https://github.com/thomasp85/tweenr/issues",
-      "License": "MIT + file LICENSE",
-      "Encoding": "UTF-8",
-      "Depends": [
-        "R (>= 3.2.0)"
-      ],
-      "Imports": [
-        "farver",
-        "magrittr",
-        "rlang",
-        "vctrs"
-      ],
-      "LinkingTo": [
-        "cpp11 (>= 0.4.2)"
-      ],
-      "RoxygenNote": "7.2.3",
-      "Suggests": [
-        "testthat",
-        "covr"
-      ],
-      "NeedsCompilation": "yes",
-      "Author": "Thomas Lin Pedersen [aut, cre] (<https://orcid.org/0000-0002-5147-4711>)",
       "Repository": "RSPM"
     },
     "units": {
