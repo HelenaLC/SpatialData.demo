@@ -6,14 +6,14 @@
 library(ggplot2)
 library(scrapper)
 library(patchwork)
-library(SpatialData)
+library(spatialdataR)
 library(SpatialData.data)
 library(SpatialData.plot)
 library(SingleCellExperiment)
 ```
 
 ```{r load-data}
-(sd <- MouseBrainVis())
+(sd <- SD.data_load("MouseBrainVis"))
 ```
 
 ### analysis

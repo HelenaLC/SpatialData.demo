@@ -7,13 +7,13 @@ library(sf)
 library(dplyr)
 library(ggplot2)
 library(patchwork)
-library(SpatialData)
+library(spatialdataR)
 library(SpatialData.data)
 library(SpatialData.plot)
 ```
 
 ```{r load-data}
-(sd <- MouseBrainMERFISH())
+(sd <- SD.data_load("MouseBrainMERFISH"))
 ```
 
 ### analysis
@@ -27,16 +27,16 @@ filter(p, cell_type == "VISp_V")
 ```
 
 ```{r fig.width=6, fig.height=5}
-plotSpatialData() + 
-    plotImage(sd) + 
-    plotPoint(sd, n=222, key="VISp_V", col="cyan")
+plotSpatialData(sd) + 
+    plotImage() + 
+    plotPoint(n=222, key="VISp_V", col="cyan")
 ```
 
 ```{r fig.width=6, fig.height=5}
-plotSpatialData() +
-    plotImage(sd) + 
-    plotShape(sd, linewidth=1, fill=NA, col="white") +   # regions
-    plotPoint(sd, size=0.2, n=4e3, colour="cell_type") + # transcripts
+plotSpatialData(sd) +
+    plotImage() + 
+    plotShape(linewidth=1, fill=NA, col="white") +   # regions
+    plotPoint(size=0.2, n=4e3, colour="cell_type") + # transcripts
     guides(col=guide_legend(override.aes=list(size=2))) +
     scale_color_manual(values=rainbow(8))
 ```
@@ -52,10 +52,10 @@ s <- shape(sd, "anatomical")
 ps <- lapply(seq_along(s), \(.) {
     roi <- st_buffer(st_as_sf(data(s[., ])), 0.1)
     sp <- crop(sp, roi)
-    plotSpatialData() +
-        plotImage(sp) + ggtitle(paste0("ROI", .)) +
-        plotShape(sp, fill=NA, col="gold", size=0.8) +
-        plotPoint(sp, i=1, n=2e3, col="turquoise", size=0.2) 
+    plotSpatialData(sp) +
+        plotImage() + ggtitle(paste0("ROI", .)) +
+        plotShape(fill=NA, col="gold", size=0.8) +
+        plotPoint(n=2e3, col="turquoise", size=0.2) 
 })
 wrap_plots(ps, nrow=2) & theme_void() & theme(plot.title=element_text(hjust=0.5))
 ```

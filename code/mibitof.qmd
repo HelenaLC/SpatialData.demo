@@ -7,27 +7,27 @@ library(sf)
 library(dplyr)
 library(ggplot2)
 library(patchwork)
-library(SpatialData)
+library(spatialdataR)
 library(SpatialData.data)
 library(SpatialData.plot)
 ```
 
 ```{r load-data}
-(sd <- ColorectalCarcinomaMIBITOF())
+(sd <- SD.data_load("ColorectalCarcinomaMIBITOF"))
 ```
 
 ### analysis
 
 ```{r fig.width=9, fig.height=3.5}
 cl <- rep(list(c(0, 1/3)), 3) # contrast limits
-ps <- lapply(imageNames(sd), \(i) plotSpatialData() + plotImage(sd, i, cl=cl) + ggtitle(i))
+ps <- lapply(imageNames(sd), \(i) plotSpatialData() + plotImage(x=sd, i=i, cl=cl) + ggtitle(i))
 wrap_plots(ps, nrow=1) & theme(legend.position="none")
 ```
 
 ```{r fig.width=8, fig.height=3, message=FALSE}
 bb <- list(xmin=0, xmax=800, ymin=200, ymax=500)
 (sp <- crop(sd, bb, j="point23"))
-plotSpatialData() + plotImage(sp, cl=cl)
+plotSpatialData() + plotImage(x=sp, cl=cl)
 ```
 
 ```{r}
@@ -40,7 +40,7 @@ is <- labelNames(sd)
 ps <- lapply(is, \(i) 
     plotSpatialData() + 
         ggtitle(i) + 
-        plotLabel(sd, i, a=2/3,
+        plotLabel(x=sd, i=i, a=2/3,
             c="Cluster", na="black", 
             pal=rainbow(nlevels(ks))))
 wrap_plots(ps, nrow=1, guides="collect")
@@ -57,7 +57,7 @@ is <- labelNames(sd)
 ps <- lapply(is, \(i) 
     plotSpatialData() + 
         ggtitle(i) + 
-        plotLabel(sp, i, a=2/3,
+        plotLabel(x=sp, i=i, a=2/3,
             c="Cluster", na="black", 
             pal=c("gold", "blue")))
 wrap_plots(ps, nrow=1, guides="collect")

@@ -13,13 +13,13 @@ library(sf)
 library(dplyr)
 library(ggplot2)
 library(patchwork)
-library(SpatialData)
+library(spatialdataR)
 library(SpatialData.data)
 library(SpatialData.plot)
 ```
 
 ```{r load-data}
-(sd <- LungAdenocarcinomaMCMICRO())
+(sd <- SD.data_load("LungAdenocarcinomaMCMICRO"))
 ```
 
 Let's start by viewing available `channels()`:
@@ -56,7 +56,7 @@ Now, let's generate a composite image of few selected channels:
 
 ```{r}
 ch <- c("CD16", "CD45", "FOXP3", "ELANE", "ECAD", "SMA")
-plotSpatialData() + plotImage(sd, ch=ch, c=pal[ch])
+plotSpatialData(sd) + plotImage(ch=ch, c=pal[ch])
 ```
 
 We can also visualize channels individually (here, using a smaller region):
@@ -68,9 +68,7 @@ bb <- list(
 sp <- crop(sd, bb)
 
 ch <- channels(image(sp))
-ps <- lapply(ch, \(.) {
-    plotSpatialData() + ggtitle(.) + 
-    plotImage(sp, ch=., c=pal[.]) })
+ps <- lapply(ch, \(.) plotSpatialData(sp) + plotImage(ch=., c=pal[.]) + ggtitle(.))
 
 wrap_plots(ps, nrow=3) & 
     theme_void() & theme(
