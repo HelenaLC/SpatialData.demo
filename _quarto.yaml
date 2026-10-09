@@ -6,8 +6,8 @@ execute:
 
 project:
   render: 
-    - code/index.qmd
-    - code/merfish.qmd
+    - "code/*.qmd"
+    - "!code/csama.qmd"
   type: website
   output-dir: docs
   execute-dir: project
