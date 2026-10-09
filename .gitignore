@@ -10,3 +10,5 @@ renv/*
 /docs/site_libs/*
 /docs/search.json
 **/*.quarto_ipynb
+/_freeze/
+/docs/
