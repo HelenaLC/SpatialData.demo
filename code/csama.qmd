@@ -33,6 +33,13 @@ These include the following elements:
 #### Dataset
 
 A size-reduced example dataset has been deposited on Zenodo. 
+
+```{r set-timeout}
+# Zenodo can be a bit slow and the dataset is large so we increase the timeout
+old_timeout <- options(timeout=600)
+on.exit(options(old_timeout))
+```
+
 We'll retrieve the compressed `SpatialData` *.zarr* store together 
 with a reference scRNA-seq dataset in *.h5ad* format [@Janesick2023], 
 decompress both archives, and stash their on-disk file paths for later.
@@ -86,18 +93,18 @@ htmltools::pre(
 In the course of this demo, we'll require the following R dependencies. Please see the session info at the end of this document for the versions used.
 
 ```{r load-libs, message=FALSE, warning=FALSE}
-library("sf")
-library("dplyr")
-library("tidyr")
-library("ggplot2")
-library("anndataR")
-library("scrapper")
-library("patchwork")
-library("reticulate")
-library("SpatialData")
-library("SpatialData.data")
-library("SpatialData.plot")
-library("SingleCellExperiment")
+library(sf)
+library(dplyr)
+library(tidyr)
+library(ggplot2)
+library(anndataR)
+library(scrapper)
+library(patchwork)
+library(reticulate)
+library(spatialdataR)
+library(SpatialData.data)
+library(SpatialData.plot)
+library(SingleCellExperiment)
 ```
 
 ### Visualization
@@ -863,7 +870,7 @@ identify nearest neighbors (NNs) in a radial neighborhood around each cell;
 and ii) quantifying the relative abundance of cell types around each cell type.
 
 ```{r rann, message=FALSE, warning=FALSE}
-library("RANN")
+library(RANN)
 ```
 
 For such type of analysis, it's important to get a sense of how many neighbors 
@@ -880,7 +887,7 @@ search, it is typically set much lower in order to reduce computational effort.
 
 ```{r, warning=FALSE}
 # get spatial coordinates
-xy <- centroids(SpatialData::transform(shape(sd)))
+xy <- centroids(spatialdataR::transform(shape(sd)))
 
 # get cells in radial neighborhood
 nn <- nn2(xy, searchtype="radius", r=r <- 100, k=k <- 51) 
@@ -993,7 +1000,7 @@ to align with the coordinate space shared between all elements; alternatively,
 this could be done after reconstruction of spatial structures.]{.align}
 
 ```{r sosta-ppp, warning=FALSE}
-xy <- centroids(SpatialData::transform(shape(sd)))
+xy <- centroids(spatialdataR::transform(shape(sd)))
 ow <- owin(xrange=range(xy[, 1]), yrange=range(xy[, 2]))
 pp <- ppp(x=xy[, 1], y=xy[, 2], window=ow, marks=se$clusters)
 ```

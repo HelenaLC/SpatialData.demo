@@ -7,14 +7,14 @@ library(sf)
 library(dplyr)
 library(ggplot2)
 library(patchwork)
-library(SpatialData)
+library(spatialdataR)
 library(SpatialData.data)
 library(SpatialData.plot)
 library(SingleCellExperiment)
 ```
 
 ```{r load-data}
-(sd <- JanesickBreastXeniumRep1())
+(sd <- SD.data_load("JanesickBreastXeniumRep1"))
 ```
 
 ### analysis
