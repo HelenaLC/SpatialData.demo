@@ -31,7 +31,7 @@ s <- grepv("_016um", shapeNames(sd))
 ```
 
 ```{r}
-plotSpatialData() + plotImage(sd, i)
+plotSpatialData(sd) + plotImage(i)
 ```
 
 ```{r}
@@ -45,9 +45,9 @@ sp <- crop(sd, bb, j=ct)
 
 ```{r}
 # visualize gene counts spatially
-plotSpatialData() +
-    plotImage(sp, i=i, j=ct) + 
-    plotShape(sp, i=s, j=ct, fill="Cd74", col=NA) +
+plotSpatialData(sp) +
+    plotImage(i=i, j=ct) + 
+    plotShape(i=s, j=ct, fill="Cd74", col=NA) +
     scale_fill_gradientn(colors=rev(hcl.colors(9, "RdPu")))
 ```
 
@@ -77,8 +77,8 @@ sq <- mask(sd,
 
 ```{r message=FALSE}
 # visualize binned counts spatially
-plotSpatialData() +
-    plotShape(sq, i="hex", j=ct, fill="Fabp2", col=NA) +
+plotSpatialData(sq) +
+    plotShape(i="hex", j=ct, fill="Fabp2", col=NA) +
     scale_fill_gradientn(
         trans="log10", na.value="white",
         colors=rev(hcl.colors(9, "RdPu")))
@@ -114,8 +114,8 @@ sp <- crop(sp, bb, j=ct)
 ```{r message=FALSE, fig.width=9, fig.height=3.5}
 # visualize PCs 1-3 spatially
 lapply(head(colnames(pc), 3), \(.) {
-    plotSpatialData() + ggtitle(.) +
-        plotShape(sp, i=s, j=ct, col=NA, fill=.) + 
+    plotSpatialData(sp) + ggtitle(.) +
+        plotShape(i=s, j=ct, col=NA, fill=.) + 
         scale_fill_gradient2(low="blue", high="red")
     }) |> 
     wrap_plots(nrow=1) &
@@ -124,11 +124,11 @@ lapply(head(colnames(pc), 3), \(.) {
 
 ```{r message=FALSE, fig.width=8, fig.height=3.5, fig.align="center"}
 # visualize histopathology & clusters side-by-side
-plotSpatialData() + 
-    plotImage(sp, i=i, j=ct) +
+plotSpatialData(sp) + 
+    plotImage(i=i, j=ct) +
     theme(legend.position="none") +
-plotSpatialData() + 
-    plotShape(sp, i=s, j=ct, fill="clusters", col=NA) +
+plotSpatialData(sp) + 
+    plotShape(i=s, j=ct, fill="clusters", col=NA) +
     scale_fill_manual(values=rainbow(nlevels(se$clusters)))
 ```
 
