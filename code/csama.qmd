@@ -9,7 +9,7 @@ date: "`r format(Sys.Date(), '%B %d, %Y')`"
 
 ## CSAMA
 
-In this demo, we'll be analyzing 5K-plex Xenium (10x Genomics) 
+In this demo, we analyse 5K-plex Xenium (10x Genomics) 
 data on a tissue section from a human breast cancer biopsy, 
 derived from [here](https://www.10xgenomics.com/datasets/xenium-prime-ffpe-human-breast-cancer).
 These include the following elements:
@@ -42,10 +42,14 @@ on.exit(options(old_timeout))
 
 We'll retrieve the compressed `SpatialData` *.zarr* store together 
 with a reference scRNA-seq dataset in *.h5ad* format [@Janesick2023], 
-decompress both archives, and stash their on-disk file paths for later:
+decompress both archives, and stash their on-disk file paths for later.
+[We also need to make sure the timeout used by the `download.file` function, which it uses
+to avoid getting stuck in a forever wait, is large enough (the default is 60 seconds).]{.aside}
 
 ```{r load-h5ad}
-# scRNA-seq data (.h5ad)
+options(timeout = 900) 
+
+# the name of the scRNA-seq data file (.h5ad)
 url_h5 <- file.path(
     "https://zenodo.org/records/20178278/files",
     "BC_scRNAseq_subset.h5ad.zip?download=1")
@@ -86,8 +90,7 @@ htmltools::pre(
 
 #### Libraries
 
-Throughout this demo, we'll require the following R dependencies; 
-these expect R v4.6.0 and Bioconductor v3.24 (devel/pre-release).
+In the course of this demo, we'll require the following R dependencies. Please see the session info at the end of this document for the versions used.
 
 ```{r load-libs, message=FALSE, warning=FALSE}
 library(sf)
@@ -170,7 +173,7 @@ plotSpatialData() + plotImage(sd, 2, ch=chs, c=pal[chs])
 ```
 
 Alternatively, we can visualize each channel separately; here, using the smaller 
-region define above. [Note that `plotImage()` will auto-adjust contrast limits 
+region defined above. [Note that `plotImage()` will auto-adjust contrast limits 
 for each channel when rendering images. Channels might hence appear differently 
 when visualized jointly/separately.]{.aside}
 
@@ -190,7 +193,7 @@ wrap_plots(nrow=2) &
 #### Segmentation
 
 We can also zoom in further to inspect how well cell segmentation boundaries 
-align with histopathology and the immunofluorescent signals used to get them:
+align with the H&E and the immunofluorescent signals:
 
 ```{r plt-if-seg, fig.width=11, fig.height=6}
 # crop to 2,000 x 3,000 bounding box
@@ -225,16 +228,16 @@ plotSpatialData() +
 
 #### Transcripts 
 
-Going all the way, let's zoom in to a couple cells in order to visualize 
-4,000 individual transcript molecules as well; we'll color these by whether
-or not they have been determined to `overlaps_nucleus` (according to 10x):
+Digging further, let's zoom in to individual cell resolution and visualize 
+transcript molecules. We colour these by whether
+or not the 10x software labelled them with `overlaps_nucleus`:
 
 ::: {.column-margin}
 Important `plotPoint` arguments:
 
 - `key` = feature(s) to plot (used further below)
 - `n` = number of points to plot (will downsample at random)
-- optional `ggplot` aesthetics, such as `color`, `alpha`, etc.
+- `ggplot` aesthetics, such as `color`, `alpha`, etc.
 :::
 
 ```{r}
@@ -258,7 +261,7 @@ plotSpatialData() +
     scale_color_manual(values=c("grey", "red"))
 ```
 
-Going back to a larger scale, let's finish with an aesthetically pleasing plot:
+Zooming back out to a larger scale, let's look at a pretty plot:
 
 ```{r fig.width=8, fig.height=4}
 #| code-fold: true
@@ -270,16 +273,15 @@ plotSpatialData() +
     theme_void() + theme(legend.position="none")
 ```
 
-### Quality Control
+### Quality Assessment
 
-Visual inspection is essential. Systematic assessment of transcript-to-cell 
-assignments would, however, require inspection of transcript localization in 
-3D across thousands of genes, which is infeasible for modern high-plex panels. 
+Visual inspection is essential. Doing this systematically and, say, check the transcript-to-cell assignments
+for a whole modern high-plex panel would, however, be impractical. 
 `r BiocStyle::Githubpkg("LazDaria/SegTraQ")` provides a collection of metrics 
 for **Seg**mentation and **Tr**anscript **A**ssignment **Q**uality Control. 
 
-While `SegTraQ` is implemented in Python, `r BiocStyle::CRANpkg("reticulate")`
-and Quarto enable us to execute both programming languages in one session. 
+`SegTraQ` is implemented in Python. `r BiocStyle::CRANpkg("reticulate")`
+and Quarto enable us to execute code from both programming languages in one session. 
 We can thus compute QC metrics in Python and subsequently switch back to R.
 
 #### Python setup
@@ -1135,11 +1137,11 @@ activated by the IRE1/XBP1 branch of the Unfolded Protein Response (UPR),
 which promotes breast cancer development, progression, and resistance to 
 therapy."*; so let's believe that makes sense, be proud, and move on.
 
-### appendix
+### Appendix
 
 ::: {.callout-note icon=false, collapse=true}
 
-### session
+#### Session
 
 ```{r sess-info}
 sessionInfo()
