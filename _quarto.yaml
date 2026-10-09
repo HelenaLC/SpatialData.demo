@@ -8,6 +8,7 @@ project:
   render: 
     - "code/*.qmd"
     - "!code/csama.qmd"
+    - "!code/4d.qmd"
   type: website
   output-dir: docs
   execute-dir: project
