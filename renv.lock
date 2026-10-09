@@ -1380,19 +1380,17 @@
     },
     "SpatialData.data": {
       "Package": "SpatialData.data",
-      "Version": "0.99.9",
+      "Version": "0.99.10",
       "Source": "GitHub",
       "Title": "SpatialData datasets",
       "Depends": [
-        "R (>= 4.5.0)"
+        "R (>= 4.6.0)"
       ],
-      "Description": "Makes 'scverse' data examples available through the NSF OSN,  and accessible from within R, using 'BiocFileCache'. Furthermore,  provides an interface to Python's 'spatialdata-io' for reading and writing to .zarr, and to aligning data into a common (identity) space.",
-      "Authors@R": "c( person(\"Vince\", \"Carey\", role=c(\"aut\"), email=\"stvjc@channing.harvard.edu\", comment=c(ORCID=\"0000-0003-4046-0063\")), person(\"Helena L.\", \"Crowell\",  role=c(\"aut\", \"cre\"), email=\"helena@crowell.eu\",  comment=c(ORCID=\"0000-0002-4801-1767\")))",
+      "Description": "A companion package to access scverse-curated example SpatialData stores. The datasets span spatial omics technologies such as Visium, Visium HD,  Xenium, MERFISH, MIBI-TOF, and imaging mass cytometry, and are distributed  as zipped Zarr stores through the Bioconductor bucket on the NSF Open  Storage Network (OSN) or the scverse spatialdata sandbox. Available  datasets and their metadata can be listed, and each dataset is downloaded  once, cached locally with 'BiocFileCache', and read into R as a  SpatialData object via 'spatialdataR' package.",
+      "Authors@R": "c( person(\"Helena L.\", \"Crowell\",  role=c(\"aut\", \"cre\"), email=\"helena@crowell.eu\",  comment=c(ORCID=\"0000-0002-4801-1767\")), person(\"Artür\", \"Manukyan\", role=c(\"aut\"), email=\"artur-man@hotmail.com\", comment=c(ORCID=\"0000-0002-0441-9517\")), person(\"Hugo\", \"Gruson\", role=c(\"aut\"), email=\"hugo.gruson@embl.de\", comment=c(ORCID=\"0000-0002-4094-1476\")), person(\"Vince\", \"Carey\", role=c(\"aut\"), email=\"stvjc@channing.harvard.edu\", comment=c(ORCID=\"0000-0003-4046-0063\")))",
       "Imports": [
         "utils",
-        "basilisk",
         "BiocFileCache",
-        "reticulate",
         "spatialdataR",
         "paws.storage"
       ],
@@ -1408,20 +1406,18 @@
       "URL": "https://github.com/HelenaLC/SpatialData.data, https://helenalc.github.io/SpatialData.data/",
       "BugReports": "https://github.com/HelenaLC/SpatialData.data/issues",
       "Config/roxygen2/version": "8.1.0",
+      "Author": "Helena L. Crowell [aut, cre] (ORCID: <https://orcid.org/0000-0002-4801-1767>), Artür Manukyan [aut] (ORCID: <https://orcid.org/0000-0002-0441-9517>), Hugo Gruson [aut] (ORCID: <https://orcid.org/0000-0002-4094-1476>), Vince Carey [aut] (ORCID: <https://orcid.org/0000-0003-4046-0063>)",
+      "Maintainer": "Helena L. Crowell <helena@crowell.eu>",
       "RemoteType": "github",
       "RemoteHost": "api.github.com",
-      "RemoteRepo": "SpatialData.data",
       "RemoteUsername": "HelenaLC",
-      "RemotePkgRef": "HelenaLC/SpatialData.data",
-      "RemoteRef": "HEAD",
-      "RemoteSha": "7b33c436eb6cec61aa498185b3d38395b4b0e7f2",
-      "NeedsCompilation": "no",
-      "Author": "Vince Carey [aut] (ORCID: <https://orcid.org/0000-0003-4046-0063>), Helena L. Crowell [aut, cre] (ORCID: <https://orcid.org/0000-0002-4801-1767>)",
-      "Maintainer": "Helena L. Crowell <helena@crowell.eu>"
+      "RemoteRepo": "SpatialData.Data",
+      "RemoteRef": "devel",
+      "RemoteSha": "273178bc922d87e487bcaeeec3afa978f3782ae9"
     },
     "SpatialData.plot": {
       "Package": "SpatialData.plot",
-      "Version": "0.99.8",
+      "Version": "0.99.9",
       "Source": "GitHub",
       "Title": "SpatialData visualization",
       "Depends": [
@@ -1460,16 +1456,14 @@
       "URL": "https://github.com/HelenaLC/SpatialData.plot",
       "BugReports": "https://github.com/HelenaLC/SpatialData.plot/issues",
       "Config/roxygen2/version": "8.1.0",
+      "Author": "Helena L. Crowell [aut, cre] (ORCID: <https://orcid.org/0000-0002-4801-1767>), Artür Manukyan [aut] (ORCID: <https://orcid.org/0000-0002-0441-9517>), Hugo Gruson [aut] (ORCID: <https://orcid.org/0000-0002-4094-1476>), Charlotte Soneson [aut] (ORCID: <https://orcid.org/0000-0003-3833-2169>), Michael Stadler [aut] (ORCID: <https://orcid.org/0000-0002-2269-4934>), Vince Carey [aut] (ORCID: <https://orcid.org/0000-0003-4046-0063>)",
+      "Maintainer": "Helena L. Crowell <helena@crowell.eu>",
       "RemoteType": "github",
       "RemoteHost": "api.github.com",
-      "RemoteRepo": "SpatialData.plot",
       "RemoteUsername": "HelenaLC",
-      "RemotePkgRef": "HelenaLC/SpatialData.plot",
-      "RemoteRef": "HEAD",
-      "RemoteSha": "8e7b7816b8ca21dcebb38629c708a0b5f673a0bd",
-      "NeedsCompilation": "no",
-      "Author": "Helena L. Crowell [aut, cre] (ORCID: <https://orcid.org/0000-0002-4801-1767>), Artür Manukyan [aut] (ORCID: <https://orcid.org/0000-0002-0441-9517>), Hugo Gruson [aut] (ORCID: <https://orcid.org/0000-0002-4094-1476>), Charlotte Soneson [aut] (ORCID: <https://orcid.org/0000-0003-3833-2169>), Michael Stadler [aut] (ORCID: <https://orcid.org/0000-0002-2269-4934>), Vince Carey [aut] (ORCID: <https://orcid.org/0000-0003-4046-0063>)",
-      "Maintainer": "Helena L. Crowell <helena@crowell.eu>"
+      "RemoteRepo": "SpatialData.plot",
+      "RemoteRef": "devel",
+      "RemoteSha": "de488f5c1532f7aba38112d6cccf482d5caa1bab"
     },
     "SpatialExperiment": {
       "Package": "SpatialExperiment",
@@ -1923,46 +1917,6 @@
       "NeedsCompilation": "yes",
       "Repository": "RSPM",
       "Encoding": "UTF-8"
-    },
-    "basilisk": {
-      "Package": "basilisk",
-      "Version": "1.25.0",
-      "Source": "Bioconductor",
-      "Date": "2025-05-19",
-      "Title": "Freezing Python Dependencies Inside Bioconductor Packages",
-      "Authors@R": "c(person(\"Aaron\", \"Lun\", role=c(\"aut\", \"cre\", \"cph\"), email=\"infinite.monkeys.with.keyboards@gmail.com\"), person(\"Vince\", \"Carey\", role=\"ctb\"))",
-      "Depends": [
-        "reticulate"
-      ],
-      "Imports": [
-        "utils",
-        "methods",
-        "parallel",
-        "dir.expiry"
-      ],
-      "Suggests": [
-        "knitr",
-        "rmarkdown",
-        "BiocStyle",
-        "testthat",
-        "callr"
-      ],
-      "biocViews": "Infrastructure",
-      "Description": "Installs a self-contained conda instance that is managed by the R/Bioconductor installation machinery. This aims to provide a consistent Python environment that can be used reliably by Bioconductor packages. Functions are also provided to enable smooth interoperability of multiple Python environments in a single R session.",
-      "License": "GPL-3",
-      "RoxygenNote": "7.3.2",
-      "StagedInstall": "false",
-      "VignetteBuilder": "knitr",
-      "BugReports": "https://github.com/LTLA/basilisk/issues",
-      "Encoding": "UTF-8",
-      "git_url": "https://git.bioconductor.org/packages/basilisk",
-      "git_branch": "devel",
-      "git_last_commit": "33507d8",
-      "git_last_commit_date": "2026-04-28",
-      "Repository": "Bioconductor 3.24",
-      "NeedsCompilation": "no",
-      "Author": "Aaron Lun [aut, cre, cph], Vince Carey [ctb]",
-      "Maintainer": "Aaron Lun <infinite.monkeys.with.keyboards@gmail.com>"
     },
     "beachmat": {
       "Package": "beachmat",
@@ -2710,8 +2664,8 @@
     },
     "duckdb": {
       "Package": "duckdb",
-      "Version": "1.5.6",
-      "Source": "Repository",
+      "Version": "1.5.6.9002",
+      "Source": "GitHub",
       "Title": "DBI Package for the DuckDB Database Management System",
       "Authors@R": "c( person(\"Hannes\", \"Mühleisen\", , \"hannes@cwi.nl\", role = \"aut\", comment = c(ORCID = \"0000-0001-8552-0029\")), person(\"Mark\", \"Raasveldt\", , \"mark.raasveldt@cwi.nl\", role = \"aut\", comment = c(ORCID = \"0000-0001-5005-6844\")), person(\"Kirill\", \"Müller\", , \"kirill@cynkra.com\", role = \"cre\", comment = c(ORCID = \"0000-0002-1416-3412\")), person(\"Stichting DuckDB Foundation\", role = \"cph\"), person(\"Apache Software Foundation\", role = \"cph\"), person(\"PostgreSQL Global Development Group\", role = \"cph\"), person(\"The Regents of the University of California\", role = \"cph\"), person(\"Cameron Desrochers\", role = \"cph\"), person(\"Victor Zverovich\", role = \"cph\"), person(\"RAD Game Tools\", role = \"cph\"), person(\"Valve Software\", role = \"cph\"), person(\"Rich Geldreich\", role = \"cph\"), person(\"Tenacious Software LLC\", role = \"cph\"), person(\"The RE2 Authors\", role = \"cph\"), person(\"Google Inc.\", role = \"cph\"), person(\"Facebook Inc.\", role = \"cph\"), person(\"Steven G. Johnson\", role = \"cph\"), person(\"Jiahao Chen\", role = \"cph\"), person(\"Tony Kelman\", role = \"cph\"), person(\"Jonas Fonseca\", role = \"cph\"), person(\"Lukas Fittl\", role = \"cph\"), person(\"Salvatore Sanfilippo\", role = \"cph\"), person(\"Art.sy, Inc.\", role = \"cph\"), person(\"Oran Agra\", role = \"cph\"), person(\"Redis Labs, Inc.\", role = \"cph\"), person(\"Melissa O'Neill\", role = \"cph\"), person(\"PCG Project contributors\", role = \"cph\") )",
       "Description": "The DuckDB project is an embedded analytical data management system with support for the Structured Query Language (SQL). This package includes all of DuckDB and an R Database Interface (DBI) connector.",
@@ -2752,12 +2706,19 @@
       "Config/comment/gha/extra-packages": "arrow does not compile against Rtools45, and the aarch64 Windows runner has no binary to install instead. adbcdrivermanager needs ignore-unavailable as well, and needs it on every runner: CRAN archived it, and pak is called with dependencies = \"all\", which resolves Enhances too, so the package is in the plan and resolves to nothing. ignore-build-errors does not cover that -- it demotes a failed build, not a failed lookup. ignore-build-errors stays for the day it returns to CRAN and Rtools45 has to build it again. Explained in handbook/operations/ci/matrix/README.md.",
       "Config/testthat/edition": "3",
       "Encoding": "UTF-8",
+      "Roxygen": "list(markdown = TRUE)",
       "SystemRequirements": "xz (for building from source)",
       "Config/roxygen2/version": "8.1.0.9000",
+      "RemoteType": "github",
+      "RemoteHost": "api.github.com",
+      "RemoteRepo": "duckdb-r",
+      "RemoteUsername": "duckdb",
+      "RemotePkgRef": "duckdb/duckdb-r",
+      "RemoteRef": "HEAD",
+      "RemoteSha": "941a6016b3874e072cc9a4926f9eb4f54c13d90b",
       "NeedsCompilation": "yes",
       "Author": "Hannes Mühleisen [aut] (ORCID: <https://orcid.org/0000-0001-8552-0029>), Mark Raasveldt [aut] (ORCID: <https://orcid.org/0000-0001-5005-6844>), Kirill Müller [cre] (ORCID: <https://orcid.org/0000-0002-1416-3412>), Stichting DuckDB Foundation [cph], Apache Software Foundation [cph], PostgreSQL Global Development Group [cph], The Regents of the University of California [cph], Cameron Desrochers [cph], Victor Zverovich [cph], RAD Game Tools [cph], Valve Software [cph], Rich Geldreich [cph], Tenacious Software LLC [cph], The RE2 Authors [cph], Google Inc. [cph], Facebook Inc. [cph], Steven G. Johnson [cph], Jiahao Chen [cph], Tony Kelman [cph], Jonas Fonseca [cph], Lukas Fittl [cph], Salvatore Sanfilippo [cph], Art.sy, Inc. [cph], Oran Agra [cph], Redis Labs, Inc. [cph], Melissa O'Neill [cph], PCG Project contributors [cph]",
-      "Maintainer": "Kirill Müller <kirill@cynkra.com>",
-      "Repository": "RSPM"
+      "Maintainer": "Kirill Müller <kirill@cynkra.com>"
     },
     "duckspatial": {
       "Package": "duckspatial",
