@@ -15,10 +15,19 @@ library(ggplot2)
 library(patchwork)
 library(spatialdataR)
 library(SpatialData.plot)
+library(magick)
+```
+
+```{r}
+library(duckspatial)
+library(duckdb)
+conn <- duckdb::dbConnect(duckdb::duckdb())
+ddbs_install(conn, extension = "httpfs")
+duckdb::dbDisconnect(conn)
 ```
 
 ```{r load-data}
-zs <- "5514375.zarr"
+zs <- "https://uk1s3.embassy.ebi.ac.uk/idr/zarr/v0.4/idr0052A/5514375.zarr"
 lb <- file.path(zs, "labels")
 (i <- readImage(zs) |> addCT(name="global"))
 
@@ -54,12 +63,19 @@ ps <- lapply(seq(2, nz, 2), \(z) {
         scalebar(len=10, xrel=0.9, yrel=0.9)
 })
 
-png(file="z%02d.png", width=300, height=300)
+out_dir <- tempfile()
+dir.create(out_dir)
+png(file=file.path(out_dir, "z%02d.png"), width=300, height=300)
 for (p in ps) print(p)
 dev.off()
- 
-system("bash -c 'magick -delay 10 $(ls *.png | sort) $(ls *.png | sort -r | tail -n +2) -loop 0 z-video.gif'")
-file.remove(list.files(pattern=".png"))
+
+list.files(out_dir, full.names = TRUE) |>
+    lapply(magick::image_read) |>
+    do.call(c, args = _) |>
+    magick::image_animate(fps=2) |>
+    magick::image_write("z-video.gif")
+
+unlink(out_dir, recursive=TRUE)
 ```
 
 ```{r message=FALSE, results="hide"}
@@ -72,15 +88,22 @@ ps <- lapply(seq(2, nt, 2), \(t) {
         theme(legend.position="none") +
         plotImage(z=10, t=t, ch=ch, c=pal) +
         plotLabel(z=10, t=t, a=1/3, pal="yellow") +
-        scalebar(len=10, xrel=0.9, yrel=0.9) 
+        scalebar(len=10, xrel=0.9, yrel=0.9)
 })
 
-png(file="z%02d.png", width=300, height=300)
+out_dir <- tempfile()
+dir.create(out_dir)
+png(file=file.path(out_dir, "t%02d.png"), width=300, height=300)
 for (p in ps) print(p)
 dev.off()
  
-system("bash -c 'magick -delay 10 $(ls *.png | sort) $(ls *.png | sort -r | tail -n +2) -loop 0 t-video.gif'")
-file.remove(list.files(pattern=".png"))
+list.files(out_dir, full.names = TRUE) |>
+    lapply(magick::image_read) |>
+    do.call(c, args = _) |>
+    magick::image_animate(fps=2) |>
+    magick::image_write("t-video.gif")
+
+unlink(out_dir, recursive=TRUE)
 ```
 
 <div style="display:flex; justify-content:center;">

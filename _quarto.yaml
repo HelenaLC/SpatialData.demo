@@ -8,7 +8,6 @@ project:
   render: 
     - "code/*.qmd"
     - "!code/csama.qmd"
-    - "!code/4d.qmd"
     - "!code/fractal.qmd"
     - "!code/visium.qmd"
     - "!code/visiumhd.qmd"
