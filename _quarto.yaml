@@ -9,6 +9,10 @@ project:
     - "code/*.qmd"
     - "!code/csama.qmd"
     - "!code/4d.qmd"
+    - "!code/fractal.qmd"
+    - "!code/visium.qmd"
+    - "!code/visiumhd.qmd"
+    - "!code/xenium.qmd"
   type: website
   output-dir: docs
   execute-dir: project
