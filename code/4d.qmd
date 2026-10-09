@@ -1,4 +1,5 @@
 ---
+title: "4D dataset (including time)"
 author:
   - name: Helena L Crowell
     affiliation: CNAG, Barcelona, Spain
@@ -19,7 +20,7 @@ library(SpatialData.plot)
 ```{r load-data}
 zs <- "5514375.zarr"
 lb <- file.path(zs, "labels")
-(i <- readImage(zs) |> addCT(name="foo"))
+(i <- readImage(zs) |> addCT(name="global"))
 
 # label includes a superfluous 'c'hannel dimesions
 # that currently causes issues with 'plotLabel()';
@@ -28,7 +29,7 @@ l <- readLabel(file.path(lb, "Cell")) |> addCT(name="foo")
 l@data <- lapply(l@data, \(.) { dim(.) <- dim(.)[-2]; . })
 sf <- spatialdataR:::.get_ms_scale(l)
 l@meta <- SpatialDataAttrs(type="label", dim=4)
-l@meta$multiscales[[1]]$datasets[[1]]$coordinateTransformations[[1]]$scale <- tail(sf, 1)
+l@meta[[1]]$multiscales[[1]]$datasets[[1]]$coordinateTransformations[[1]]$scale <- sf[-1]
 
 (sd <- SpatialData(
     images=list(image=i),
@@ -45,12 +46,12 @@ ax <- axes(image(sd), "name")
 zi <- which(ax == "z")
 nz <- dim(image(sd))[zi]-10
 ps <- lapply(seq(2, nz, 2), \(z) {
-    plotSpatialData() + 
-        ggtitle(paste("z =", z)) +
+    plotSpatialData(sd) + 
+        labs(title=paste("z =", z)) +
         theme(legend.position="none") +
-        plotImage(sd, z=z, t=1, ch=ch, c=pal) +
-        plotLabel(sd, z=z, t=1, a=1/3, pal="yellow") +
-        scalebar(image(sd), len=10, xrel=0.9, yrel=0.9) 
+        plotImage(z=z, t=1, ch=ch, c=pal) +
+        plotLabel(z=z, t=1, a=1/3, pal="yellow") +
+        scalebar(len=10, xrel=0.9, yrel=0.9)
 })
 
 png(file="z%02d.png", width=300, height=300)
@@ -66,12 +67,12 @@ ax <- axes(image(sd), "name")
 ti <- which(ax == "t")
 nt <- dim(image(sd))[ti]
 ps <- lapply(seq(2, nt, 2), \(t) {
-    plotSpatialData() + 
-        ggtitle(paste("t =", t)) +
+    plotSpatialData(sd) + 
+        labs(title = paste("t =", t)) +
         theme(legend.position="none") +
-        plotImage(sd, z=10, t=t, ch=ch, c=pal) +
-        plotLabel(sd, z=10, t=t, a=1/3, pal="yellow") +
-        scalebar(image(sd), len=10, xrel=0.9, yrel=0.9) 
+        plotImage(z=10, t=t, ch=ch, c=pal) +
+        plotLabel(z=10, t=t, a=1/3, pal="yellow") +
+        scalebar(len=10, xrel=0.9, yrel=0.9) 
 })
 
 png(file="z%02d.png", width=300, height=300)
