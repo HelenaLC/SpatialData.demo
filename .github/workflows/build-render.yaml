@@ -22,6 +22,14 @@ jobs:
     steps:
     - uses: actions/checkout@v7
 
+    - name: Cache downloaded datasets
+      uses: actions/cache@v6
+      with:
+        path: ~/.cache/R/BiocFileCache
+        key: ${{ runner.os }}-${{ github.ref_name }}-cached-data
+        restore-keys: |
+          ${{ runner.os }}-${{ github.event.pull_request.base.ref }}-cached-data
+
     - name: Cache `_freeze` folder
       uses: actions/cache@v6
       with:
