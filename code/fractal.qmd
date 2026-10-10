@@ -40,9 +40,15 @@ url <- sprintf(
     "https://zenodo.org/records/10519143/files/%s.zip?download=1",
     fnm <- "20200812-CardiomyocyteDifferentiation14-Cycle1.zarr")
 
-# retrieve
-zip <- tempfile(fileext=".zip")
-download.file(url, zip, quiet=TRUE)
+# retrieve:
+# - cached copy (from previous download) if available and md5sum matches
+# - from zenodo otherwise
+
+zip <- file.path(tools::R_user_dir("SpatialData.demo", "cache"), paste0(fnm, ".zip"))
+dir.create(dirname(zip), recursive=TRUE, showWarnings=FALSE)
+if (!file.exists(zip) || tools::md5sum(zip) != "0caf026b7ca264782c016c7c3bbd9cf9" ) {
+    download.file(url, zip, quiet=TRUE, mode="wb")
+}
 
 # decompress
 unzip(zip, exdir=dirname(zip))
