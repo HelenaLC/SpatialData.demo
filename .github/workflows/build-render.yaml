@@ -25,7 +25,9 @@ jobs:
     - name: Cache downloaded datasets
       uses: actions/cache@v6
       with:
-        path: ~/.cache/R/BiocFileCache
+        path: |
+          ~/.cache/R/BiocFileCache
+          ~/.cache/SpatialData.demo
         key: ${{ runner.os }}-${{ github.ref_name }}-cached-data
         restore-keys: |
           ${{ runner.os }}-${{ github.event.pull_request.base.ref }}-cached-data
