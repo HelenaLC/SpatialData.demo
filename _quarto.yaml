@@ -27,5 +27,10 @@ format:
     bibliography: code/_.bib
 
 website:
-  title: "SpatialData"
-
+  title: "spatialdataR tutorials"
+  navbar:
+    search: true
+    right:
+      - icon: github
+        href: https://github.com/HelenaLC/SpatialData.demo
+        aria-label: GitHub
