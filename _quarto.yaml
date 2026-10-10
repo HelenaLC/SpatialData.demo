@@ -6,6 +6,7 @@ execute:
 
 project:
   render: 
+    - "index.qmd"
     - "code/*.qmd"
     - "!code/csama.qmd"
     - "!code/4d.qmd"
@@ -27,14 +28,4 @@ format:
 
 website:
   title: "SpatialData"
-  navbar:
-    left:
-      - code/csama.qmd
-      - code/fractal.qmd
-      - code/merfish.qmd
-      - code/mibitof.qmd
-      - code/mcmicro.qmd
-      - code/cosmx.qmd
-      - code/xenium.qmd
-      - code/visium.qmd
-      - code/visiumhd.qmd
+

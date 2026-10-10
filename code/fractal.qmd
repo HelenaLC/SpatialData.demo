@@ -5,7 +5,7 @@ author:
     affiliation: CNAG, Barcelona, Spain
   - name: Charlotte Soneson
     affiliation: FMI, Basel, Switzerland
-date: "`r format(Sys.Date(), '%B %d, %Y')`"
+date: last-modified
 ---
 
 In this demo we will work with an example data set consisting of human induced 

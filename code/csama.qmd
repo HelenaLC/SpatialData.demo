@@ -1,13 +1,13 @@
 ---
+title: "SpatialData python & spatialdataR mixed workflows"
+subtitle: CSAMA 2026
 author:
   - name: Helena L. Crowell
     affiliation: CNAG, Barcelona, Spain
   - name: Daria Lazic
     affiliation: EMBL, Heidelberg, Germany
-date: "`r format(Sys.Date(), '%B %d, %Y')`"
+date: last-modified
 ---
-
-## CSAMA
 
 In this demo, we analyse 5K-plex Xenium (10x Genomics) 
 data on a tissue section from a human breast cancer biopsy, 
@@ -34,21 +34,21 @@ These include the following elements:
 
 A size-reduced example dataset has been deposited on Zenodo. 
 
+[We need to make sure the timeout used by the `download.file` function, which it uses
+to avoid getting stuck in a forever wait, is large enough (the default is 60 seconds).]{.aside}
+
 ```{r set-timeout}
 # Zenodo can be a bit slow and the dataset is large so we increase the timeout
-old_timeout <- options(timeout=600)
+old_timeout <- options(timeout=900)
 on.exit(options(old_timeout))
 ```
 
 We'll retrieve the compressed `SpatialData` *.zarr* store together 
 with a reference scRNA-seq dataset in *.h5ad* format [@Janesick2023], 
 decompress both archives, and stash their on-disk file paths for later.
-[We also need to make sure the timeout used by the `download.file` function, which it uses
-to avoid getting stuck in a forever wait, is large enough (the default is 60 seconds).]{.aside}
+
 
 ```{r load-h5ad}
-options(timeout = 900) 
-
 # the name of the scRNA-seq data file (.h5ad)
 url_h5 <- file.path(
     "https://zenodo.org/records/20178278/files",
@@ -124,7 +124,7 @@ components. To date, whole-slide H\&E images (WSIs) remain the clinical gold
 standard for cancer diagnosis, including tumor grading, staging, and prognosis.
 
 ```{r plt-he}
-plotSpatialData() + plotImage(sd)
+plotSpatialData(sd) + plotImage()
 ```
 
 We can also zoom into a particular region by specifying a bounding box 
@@ -135,7 +135,7 @@ bb <- list(
     xmin=15e3, xmax=18e3, 
     ymin=44e3, ymax=46e3)
 sp <- crop(sd, bb)
-plotSpatialData() + plotImage(sp)
+plotSpatialData(sp) + plotImage()
 ```
 
 #### Immunofluorescence
@@ -169,7 +169,7 @@ for consistent visualization, we also specify colors to use for each channel:
 ```{r plt-if-all}
 pal <- c("blue", "green", "cyan", "magenta")
 chs <- names(pal) <- channels(img)
-plotSpatialData() + plotImage(sd, 2, ch=chs, c=pal[chs])
+plotSpatialData(sd) + plotImage(2, ch=chs, c=pal[chs])
 ```
 
 Alternatively, we can visualize each channel separately; here, using the smaller 
@@ -180,8 +180,8 @@ when visualized jointly/separately.]{.aside}
 ```{r plt-if-one}
 # plot channels one by one
 lapply(chs, \(.) {
-    plotSpatialData() + ggtitle(.) +
-    plotImage(sp, i=2, ch=., c=pal[.])
+    plotSpatialData(sd) + ggtitle(.) +
+    plotImage(i=2, ch=., c=pal[.])
 }) |>
 # arrange in 2x2 grid
 wrap_plots(nrow=2) &
