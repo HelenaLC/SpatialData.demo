@@ -6,6 +6,7 @@ execute:
 
 project:
   render: 
+    - "index.qmd"
     - "code/*.qmd"
     - "!code/csama.qmd"
     - "!code/4d.qmd"
@@ -22,19 +23,13 @@ format:
     toc-depth: 4
     code-fold: false
     standalone: true
-    embed-resources: true
     bibliography: code/_.bib
 
 website:
-  title: "SpatialData"
+  title: "spatialdataR tutorials"
   navbar:
-    left:
-      - code/csama.qmd
-      - code/fractal.qmd
-      - code/merfish.qmd
-      - code/mibitof.qmd
-      - code/mcmicro.qmd
-      - code/cosmx.qmd
-      - code/xenium.qmd
-      - code/visium.qmd
-      - code/visiumhd.qmd
+    search: true
+    right:
+      - icon: github
+        href: https://github.com/HelenaLC/SpatialData.demo
+        aria-label: GitHub

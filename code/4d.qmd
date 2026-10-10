@@ -3,7 +3,7 @@ title: "4D dataset (including time)"
 author:
   - name: Helena L Crowell
     affiliation: CNAG, Barcelona, Spain
-date: "`r format(Sys.Date(), '%B %d, %Y')`"
+date: last-modified
 ---
 
 ## preamble

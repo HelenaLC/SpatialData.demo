@@ -1,4 +1,10 @@
-## Visium
+---
+title: Visium
+author:
+  - name: Helena L Crowell
+    affiliation: CNAG, Barcelona, Spain
+date: last-modified
+---
 
 ### preamble
 
@@ -25,7 +31,7 @@ version of these data; we'll add these here based on a (visual) guesstimate:
 #| layout-ncol: 2
 ct <- "lowres"
 for (s in c("ST8059048", "ST8059050")) {
-    i <- grepv(paste0(s, "_lowres"), imageNames(sd))
+    i <- grep(paste0(s, "_lowres"), imageNames(sd))
     image(sd, i) <- addCT(image(sd, i), name=ct, type="identity")
     shape(sd, s) <- addCT(shape(sd, s), name=ct, type="scale", data=list(0.0345, 0.0345))
     print(

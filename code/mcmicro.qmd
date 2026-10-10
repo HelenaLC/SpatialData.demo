@@ -1,3 +1,11 @@
+---
+title: MCMICRO
+author:
+  - name: Helena L Crowell
+    affiliation: CNAG, Barcelona, Spain
+date: last-modified
+---
+
 ## MCMICRO
 
 In this demo, we'll analyze 12-plex CyCIF data on a human lung adenocarcinoma 
