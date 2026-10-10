@@ -23,7 +23,6 @@ format:
     toc-depth: 4
     code-fold: false
     standalone: true
-    embed-resources: true
     bibliography: code/_.bib
 
 website:
