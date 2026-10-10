@@ -31,6 +31,15 @@ library(SingleCellExperiment)
 
 We first download the compressed OME-Zarr file from Zenodo and expand the content.
 
+[We need to make sure the timeout used by the `download.file` function, which it uses
+to avoid getting stuck in a forever wait, is large enough (the default is 60 seconds).]{.aside}
+
+```{r set-timeout}
+# Zenodo can be a bit slow and the dataset is large so we increase the timeout
+old_timeout <- options(timeout=900)
+on.exit(options(old_timeout))
+```
+
 ```{r load-data}
 url <- sprintf(
     "https://zenodo.org/records/10519143/files/%s.zip?download=1",
@@ -136,7 +145,7 @@ wrap_plots(a, b, c, ncol=1)
 # values are uint16 - scale contrast limits by maximum value (2^16-1)
 plotSpatialData(sd) + 
     plotImage(cl=list(c(100, 600)/65535)) +
-    scalebar(image(sd), len=150, col="yellow", xrel=0.05, yrel=0.95) + 
+    scalebar(len=150, col="yellow", xrel=0.05, yrel=0.95) + 
     labs(title="cardio-d14")
 ```
 
@@ -270,7 +279,7 @@ sapply(assays(se), as.vector)
 ```{r plot-time-data}
 plotSpatialData(sdt) + 
     plotImage(i="image", t=1) + 
-    scalebar(image(sdt), len=150, col="purple") + 
+    scalebar(len=150, col="purple") + 
     theme_void() + theme(legend.position="none")
 ```
 
@@ -287,7 +296,7 @@ ps <- lapply(ts, \(t) {
         annotate("text",
             x=Inf, y=Inf, hjust=1.2, vjust=-0.8, 
             label=paste("t =", t), size=5, col="yellow") +
-        scalebar(image(sdt), len=150, col="purple") + 
+        scalebar(len=150, col="purple") + 
         theme_void() + theme(legend.position="none")
 })
 
