@@ -51,8 +51,8 @@ if (!file.exists(zip) || tools::md5sum(zip) != "0caf026b7ca264782c016c7c3bbd9cf9
 }
 
 # decompress
-unzip(zip, exdir=dirname(zip))
-zs <- file.path(dirname(zip), fnm)
+unzip(zip, exdir=tempdir())
+zs <- file.path(tempdir(), fnm)
 cat(basename(zs))
 ```
 
