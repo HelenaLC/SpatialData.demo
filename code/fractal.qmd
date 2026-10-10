@@ -8,11 +8,6 @@ author:
 date: "`r format(Sys.Date(), '%B %d, %Y')`"
 ---
 
-```{r set-timeout}
-#| echo: false
-options(timeout=1000)
-```
-
 In this demo we will work with an example data set consisting of human induced 
 pluripotent stem cells, imaged at 40x magnification with a Yokogawa CV7000 
 microscope and processed using [Fractal](https://fractal-analytics-platform.github.io/).
@@ -36,7 +31,7 @@ to avoid getting stuck in a forever wait, is large enough (the default is 60 sec
 
 ```{r set-timeout}
 # Zenodo can be a bit slow and the dataset is large so we increase the timeout
-old_timeout <- options(timeout=900)
+old_timeout <- options(timeout=1000)
 on.exit(options(old_timeout))
 ```
 
