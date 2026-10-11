@@ -63,6 +63,7 @@ jobs:
         AWS_REGION: us-east-1
 
     - uses: quarto-dev/quarto-actions/publish@v2
+      if: github.event_name == 'push'
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
