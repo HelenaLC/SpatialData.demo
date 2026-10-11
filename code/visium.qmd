@@ -4,6 +4,9 @@ author:
   - name: Helena L Crowell
     affiliation: CNAG, Barcelona, Spain
 date: last-modified
+categories:
+  - spatial transcriptomics
+  - imaging-based
 ---
 
 ### preamble

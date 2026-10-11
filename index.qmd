@@ -2,4 +2,5 @@
 listing:
   contents: code
   type: grid
+  categories: true
 ---

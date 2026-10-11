@@ -7,6 +7,12 @@ author:
   - name: Daria Lazic
     affiliation: EMBL, Heidelberg, Germany
 date: last-modified
+categories:
+  - spatial transcriptomics
+  - sequencing-based
+  - python
+  - R
+  - Xenium
 ---
 
 In this demo, we analyse 5K-plex Xenium (10x Genomics) 
