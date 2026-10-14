@@ -27,7 +27,7 @@ jobs:
       with:
         path: |
           ~/.cache/R/BiocFileCache
-          ~/.cache/SpatialData.demo
+          ~/.cache/R/SpatialData.demo
         key: ${{ runner.os }}-${{ github.ref_name }}-cached-data
         restore-keys: |
           ${{ runner.os }}-${{ github.event.pull_request.base.ref }}-cached-data
