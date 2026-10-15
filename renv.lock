@@ -1411,7 +1411,7 @@
       "RemoteType": "github",
       "RemoteHost": "api.github.com",
       "RemoteUsername": "HelenaLC",
-      "RemoteRepo": "SpatialData.Data",
+      "RemoteRepo": "SpatialData.data",
       "RemoteRef": "devel",
       "RemoteSha": "273178bc922d87e487bcaeeec3afa978f3782ae9"
     },
@@ -1455,15 +1455,15 @@
       "VignetteBuilder": "knitr",
       "URL": "https://github.com/HelenaLC/SpatialData.plot",
       "BugReports": "https://github.com/HelenaLC/SpatialData.plot/issues",
-      "Config/roxygen2/version": "8.1.0",
+      "Config/roxygen2/version": "8.1.1",
       "Author": "Helena L. Crowell [aut, cre] (ORCID: <https://orcid.org/0000-0002-4801-1767>), Artür Manukyan [aut] (ORCID: <https://orcid.org/0000-0002-0441-9517>), Hugo Gruson [aut] (ORCID: <https://orcid.org/0000-0002-4094-1476>), Charlotte Soneson [aut] (ORCID: <https://orcid.org/0000-0003-3833-2169>), Michael Stadler [aut] (ORCID: <https://orcid.org/0000-0002-2269-4934>), Vince Carey [aut] (ORCID: <https://orcid.org/0000-0003-4046-0063>)",
       "Maintainer": "Helena L. Crowell <helena@crowell.eu>",
       "RemoteType": "github",
       "RemoteHost": "api.github.com",
       "RemoteUsername": "HelenaLC",
-      "RemoteRepo": "SpatialData.plot",
+      "RemoteRepo": "Spatialdata.plot",
       "RemoteRef": "devel",
-      "RemoteSha": "de488f5c1532f7aba38112d6cccf482d5caa1bab"
+      "RemoteSha": "dda6ce73a3eb97e4a70b854a334a98110aa62527"
     },
     "SpatialExperiment": {
       "Package": "SpatialExperiment",
@@ -5100,7 +5100,7 @@
     },
     "spatialdataR": {
       "Package": "spatialdataR",
-      "Version": "0.99.45",
+      "Version": "0.99.46",
       "Source": "GitHub",
       "Title": "Representation of Python's spatialdata in R",
       "Depends": [
@@ -5144,16 +5144,14 @@
       "URL": "https://helenalc.github.io/spatialdataR, https://github.com/HelenaLC/spatialdataR",
       "Config/roxygen2/version": "8.1.0",
       "Config/testthat/edition": "3",
+      "Author": "Helena L. Crowell [aut, cre] (ORCID: <https://orcid.org/0000-0002-4801-1767>), Artür Manukyan [aut] (ORCID: <https://orcid.org/0000-0002-0441-9517>), Hugo Gruson [aut] (ORCID: <https://orcid.org/0000-0002-4094-1476>), Vince Carey [aut] (ORCID: <https://orcid.org/0000-0003-4046-0063>)",
+      "Maintainer": "Helena L. Crowell <helena@crowell.eu>",
       "RemoteType": "github",
       "RemoteHost": "api.github.com",
-      "RemoteRepo": "spatialdataR",
       "RemoteUsername": "HelenaLC",
-      "RemotePkgRef": "HelenaLC/spatialdataR",
-      "RemoteRef": "HEAD",
-      "RemoteSha": "78f97693783934c5c8a23b6eb2635796d404ca2c",
-      "NeedsCompilation": "no",
-      "Author": "Helena L. Crowell [aut, cre] (ORCID: <https://orcid.org/0000-0002-4801-1767>), Artür Manukyan [aut] (ORCID: <https://orcid.org/0000-0002-0441-9517>), Hugo Gruson [aut] (ORCID: <https://orcid.org/0000-0002-4094-1476>), Vince Carey [aut] (ORCID: <https://orcid.org/0000-0003-4046-0063>)",
-      "Maintainer": "Helena L. Crowell <helena@crowell.eu>"
+      "RemoteRepo": "spatialdataR",
+      "RemoteRef": "devel",
+      "RemoteSha": "6422a4e87bc9ce7010cdd824809e8dfa14f84b56"
     },
     "spatstat.data": {
       "Package": "spatstat.data",
