@@ -44,7 +44,7 @@ base::table(ks <- se$Cluster)
 ```{r fig.width=10, fig.height=3.5}
 is <- labelNames(sd)
 ps <- lapply(is, \(i) 
-    plotSpatialData(sd) + 
+    plotSpatialData(sd, ct = sub("_labels$", "", i)) + 
         ggtitle(i) + 
         plotLabel(i=i, a=2/3,
             c="Cluster", na="black", 
@@ -61,7 +61,7 @@ base::table(table(sp)$Cluster)
 # TODO: this is wrong!
 is <- labelNames(sd)
 ps <- lapply(is, \(i) 
-    plotSpatialData(sp) + 
+    plotSpatialData(sp, ct = sub("_labels$", "", i)) + 
         ggtitle(i) + 
         plotLabel(i=i, a=2/3,
             c="Cluster", na="black", 
