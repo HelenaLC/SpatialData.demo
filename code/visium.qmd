@@ -6,7 +6,7 @@ author:
 date: last-modified
 categories:
   - spatial transcriptomics
-  - imaging-based
+  - sequencing-based
 ---
 
 ### preamble
