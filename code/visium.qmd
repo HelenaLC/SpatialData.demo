@@ -115,8 +115,9 @@ lapply(head(colnames(pc), 3), \(.) {
 ```
 
 ```{r fig.width=4, fig.height=3.5, fig.align="center", message=FALSE}
-plotSpatialData(sp) + ggtitle(i) +
-    plotShape("ST8059048", col=NA, fill="clusters") + 
+plotSpatialData(sp) + 
+    ggtitle(i <- "ST8059048") +
+    plotShape(i, col=NA, fill="clusters") + 
     scale_fill_manual(values=rainbow(nlevels(se$clusters)))
 ```
 
