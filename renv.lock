@@ -1417,7 +1417,7 @@
     },
     "SpatialData.plot": {
       "Package": "SpatialData.plot",
-      "Version": "0.99.9",
+      "Version": "0.99.10",
       "Source": "GitHub",
       "Title": "SpatialData visualization",
       "Depends": [
@@ -5100,7 +5100,7 @@
     },
     "spatialdataR": {
       "Package": "spatialdataR",
-      "Version": "0.99.46",
+      "Version": "0.99.47",
       "Source": "GitHub",
       "Title": "Representation of Python's spatialdata in R",
       "Depends": [
