@@ -15,11 +15,11 @@ categories:
 library(ggplot2)
 library(scrapper)
 library(patchwork)
+library(Rgraphviz)
 library(spatialdataR)
 library(SpatialData.data)
 library(SpatialData.plot)
 library(SingleCellExperiment)
-library(Rgraphviz)
 ```
 
 ```{r load-data, message=FALSE}
