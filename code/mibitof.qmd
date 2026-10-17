@@ -4,11 +4,13 @@ author:
   - name: Helena L Crowell
     affiliation: CNAG, Barcelona, Spain
 date: last-modified
+categories:
+  - spatial proteomics
 ---
 
 ### preamble
 
-```{r load-libs}
+```{r load-libs, message=FALSE, warning=FALSE}
 library(sf)
 library(dplyr)
 library(ggplot2)
@@ -26,7 +28,9 @@ library(SpatialData.plot)
 
 ```{r fig.width=9, fig.height=3.5}
 cl <- rep(list(c(0, 1/3)), 3) # contrast limits
-ps <- lapply(imageNames(sd), \(i) plotSpatialData() + plotImage(x=sd, i=i, cl=cl) + ggtitle(i))
+ps <- lapply(imageNames(sd), \(i) 
+    plotSpatialData() + ggtitle(i) +
+        plotImage(x=sd, i=i, cl=cl))
 wrap_plots(ps, nrow=1) & theme(legend.position="none")
 ```
 
@@ -41,7 +45,7 @@ plotSpatialData() + plotImage(x=sp, cl=cl)
 base::table(ks <- se$Cluster)
 ```
 
-```{r fig.width=10, fig.height=3.5}
+```{r fig.width=10, fig.height=3.5, message=FALSE}
 is <- labelNames(sd)
 ps <- lapply(is, \(i) 
     plotSpatialData() + 
@@ -58,7 +62,6 @@ base::table(table(sp)$Cluster)
 ```
 
 ```{r fig.width=10, fig.height=3.5}
-# TODO: this is wrong!
 is <- labelNames(sd)
 ps <- lapply(is, \(i) 
     plotSpatialData() + 
