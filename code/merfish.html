@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Helena L Crowell">
-<meta name="dcterms.date" content="2026-10-15">
+<meta name="dcterms.date" content="2026-10-17">
 
 <title>MERFISH – spatialdataR tutorials</title>
 <style>
@@ -166,7 +166,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <h1 class="title">MERFISH</h1>
   <div class="quarto-categories">
     <div class="quarto-category">spatial transcriptomics</div>
-    <div class="quarto-category">sequencing-based</div>
+    <div class="quarto-category">imaging-based</div>
   </div>
   </div>
 
@@ -191,7 +191,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">October 15, 2026</p>
+      <p class="date">October 17, 2026</p>
     </div>
   </div>
   
@@ -220,7 +220,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <pre><code>class: SpatialData
 - images(1):
   - rasterized (1,522,575)
-- labels(0):
 - points(1):
   - single_molecule (3714642)
 - shapes(2):
@@ -244,8 +243,8 @@ coordinate systems(1):
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">distinct</span>(cell_type) <span class="sc">|&gt;</span></span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">pull</span>(cell_type)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] "outside_VISp" "VISp_IV"      "VISp"         "VISp_VI"      "VISp_wm"     
-[6] "VISp_I"       "VISp_II/III"  "VISp_V"      </code></pre>
+<pre><code>[1] "outside_VISp" "VISp_VI"      "VISp"         "VISp_wm"      "VISp_IV"     
+[6] "VISp_I"       "VISp_V"       "VISp_II/III" </code></pre>
 </div>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">filter</span>(p, cell_type <span class="sc">==</span> <span class="st">"VISp_V"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
@@ -345,7 +344,7 @@ attached base packages:
 [1] stats     graphics  grDevices datasets  utils     methods   base     
 
 other attached packages:
-[1] SpatialData.plot_0.99.9  SpatialData.data_0.99.10 spatialdataR_0.99.45    
+[1] SpatialData.plot_0.99.9  SpatialData.data_0.99.10 spatialdataR_0.99.46    
 [4] patchwork_1.3.2          ggplot2_4.0.3            dplyr_1.2.1             
 [7] sf_1.1-3                
 

@@ -7,9 +7,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Helena L Crowell">
-<meta name="dcterms.date" content="2026-10-15">
+<meta name="dcterms.date" content="2026-10-17">
 
-<title>MIBITOF – spatialdataR tutorials</title>
+<title>Visium – spatialdataR tutorials</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -163,8 +163,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">MIBITOF</h1>
-</div>
+<h1 class="title">Visium</h1>
+  <div class="quarto-categories">
+    <div class="quarto-category">spatial transcriptomics</div>
+    <div class="quarto-category">sequencing-based</div>
+  </div>
+  </div>
 
 
 <div class="quarto-title-meta-author">
@@ -187,7 +191,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">October 15, 2026</p>
+      <p class="date">October 17, 2026</p>
     </div>
   </div>
   
@@ -202,140 +206,169 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="preamble" class="level3">
 <h3 class="anchored" data-anchor-id="preamble">preamble</h3>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(sf)</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(patchwork)</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(scrapper)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(patchwork)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(Rgraphviz)</span>
 <span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(spatialdataR)</span>
 <span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(SpatialData.data)</span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(SpatialData.plot)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(SpatialData.plot)</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(SingleCellExperiment)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>(sd <span class="ot">&lt;-</span> <span class="fu">SD.data_load</span>(<span class="st">"ColorectalCarcinomaMIBITOF"</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>(sd <span class="ot">&lt;-</span> <span class="fu">SD.data_load</span>(<span class="st">"MouseBrainVis"</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>class: SpatialData
-- images(3):
-  - point16_image (3,1024,1024)
-  - point23_image (3,1024,1024)
-  - point8_image (3,1024,1024)
-- labels(3):
-  - point16_labels (1024,1024)
-  - point23_labels (1024,1024)
-  - point8_labels (1024,1024)
-- points(0):
-- shapes(0):
+- images(4):
+  - ST8059048_hires_image (3,2000,1969)
+  - ST8059048_lowres_image (3,600,591)
+  - ST8059050_hires_image (3,2000,1968)
+  - ST8059050_lowres_image (3,600,590)
+- shapes(2):
+  - ST8059048 (2987,circle)
+  - ST8059050 (3496,circle)
 - tables(1):
-  - table (36,3309) [point8_labels,point16_labels,point23_labels]
-coordinate systems(3):
-- point16(2): point16_image point16_labels
-- point23(2): point23_image point23_labels
-- point8(2): point8_image point8_labels</code></pre>
+  - table (31053,6484) [ST8059048,ST8059050]
+coordinate systems(2):
+- ST8059048(2): ST8059048_hires_image ST8059048
+- ST8059050(2): ST8059050_hires_image ST8059050</code></pre>
 </div>
 </div>
 </section>
 <section id="analysis" class="level3">
 <h3 class="anchored" data-anchor-id="analysis">analysis</h3>
+<p>Unfortunately, coordinate transformations are unspecified for the low-resolution version of these data; we’ll add these here based on a (visual) guesstimate:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>ct <span class="ot">&lt;-</span> <span class="st">"lowres"</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (s <span class="cf">in</span> <span class="fu">c</span>(<span class="st">"ST8059048"</span>, <span class="st">"ST8059050"</span>)) {</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    i <span class="ot">&lt;-</span> <span class="fu">grep</span>(<span class="fu">paste0</span>(s, <span class="st">"_lowres"</span>), <span class="fu">imageNames</span>(sd))</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">image</span>(sd, i) <span class="ot">&lt;-</span> <span class="fu">addCT</span>(<span class="fu">image</span>(sd, i), <span class="at">name=</span>ct, <span class="at">type=</span><span class="st">"identity"</span>)</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">shape</span>(sd, s) <span class="ot">&lt;-</span> <span class="fu">addCT</span>(<span class="fu">shape</span>(sd, s), <span class="at">name=</span>ct, <span class="at">type=</span><span class="st">"scale"</span>, <span class="at">data=</span><span class="fu">list</span>(<span class="fl">0.0345</span>, <span class="fl">0.0345</span>))</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">print</span>(<span class="fu">plotSpatialData</span>(sd, <span class="st">"lowres"</span>) <span class="sc">+</span> <span class="fu">plotImage</span>(i) <span class="sc">+</span> <span class="fu">plotShape</span>(s) <span class="sc">+</span> <span class="fu">ggtitle</span>(s))</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell quarto-layout-panel" data-layout-ncol="2">
+<div class="quarto-layout-row">
+<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
+<p><img src="visium_files/figure-html/unnamed-chunk-1-1.png" class="img-fluid" width="672"></p>
+</div>
+<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
+<p><img src="visium_files/figure-html/unnamed-chunk-1-2.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</div>
+<p>The resulting graph of coordinate transformations looks as follows; here, source nodes = spatial elements, and target nodes = coordinate spaces.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>cl <span class="ot">&lt;-</span> <span class="fu">rep</span>(<span class="fu">list</span>(<span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">1</span><span class="sc">/</span><span class="dv">3</span>)), <span class="dv">3</span>) <span class="co"># contrast limits</span></span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>ps <span class="ot">&lt;-</span> <span class="fu">lapply</span>(<span class="fu">imageNames</span>(sd), \(i) <span class="fu">plotSpatialData</span>() <span class="sc">+</span> <span class="fu">plotImage</span>(<span class="at">x=</span>sd, <span class="at">i=</span>i, <span class="at">cl=</span>cl) <span class="sc">+</span> <span class="fu">ggtitle</span>(i))</span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="fu">wrap_plots</span>(ps, <span class="at">nrow=</span><span class="dv">1</span>) <span class="sc">&amp;</span> <span class="fu">theme</span>(<span class="at">legend.position=</span><span class="st">"none"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">CTplot</span>(<span class="fu">CTgraph</span>(sd))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="mibitof_files/figure-html/unnamed-chunk-1-1.png" class="img-fluid figure-img" width="864"></p>
+<p><img src="visium_files/figure-html/unnamed-chunk-2-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Alternatively, we can use the high-resolution data as is:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>n <span class="ot">&lt;-</span> <span class="fu">length</span>(s <span class="ot">&lt;-</span> <span class="fu">shape</span>(sd))</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="fu">shape</span>(sd, <span class="st">"spots"</span>) <span class="ot">&lt;-</span> s[<span class="fu">sample</span>(n, <span class="dv">333</span>)]</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="fu">plotSpatialData</span>(sd) <span class="sc">+</span>  </span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">plotImage</span>() <span class="sc">+</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">plotShape</span>(<span class="st">"spots"</span>, <span class="at">col=</span><span class="st">"red"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="visium_files/figure-html/unnamed-chunk-3-1.png" class="img-fluid figure-img" width="576"></p>
 </figure>
 </div>
 </div>
 </div>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>bb <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="at">xmin=</span><span class="dv">0</span>, <span class="at">xmax=</span><span class="dv">800</span>, <span class="at">ymin=</span><span class="dv">200</span>, <span class="at">ymax=</span><span class="dv">500</span>)</span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>(sp <span class="ot">&lt;-</span> <span class="fu">crop</span>(sd, bb, <span class="at">j=</span><span class="st">"point23"</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>class: SpatialData
-- images(1):
-  - point23_image (3,300,800)
-- labels(1):
-  - point23_labels (300,800)
-- points(0):
-- shapes(0):
-- tables(1):
-  - table (36,1241) [point8_labels,point16_labels,point23_labels]
-coordinate systems(1):
-- point23(2): point23_image point23_labels</code></pre>
-</div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plotSpatialData</span>() <span class="sc">+</span> <span class="fu">plotImage</span>(<span class="at">x=</span>sp, <span class="at">cl=</span>cl)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>bb <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="at">xmin=</span><span class="dv">800</span>, <span class="at">xmax=</span><span class="dv">1600</span>, <span class="at">ymin=</span><span class="dv">500</span>, <span class="at">ymax=</span><span class="dv">900</span>)</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>sp <span class="ot">&lt;-</span> <span class="fu">crop</span>(sd[<span class="fu">c</span>(<span class="st">"images"</span>, <span class="st">"shapes"</span>), <span class="fu">list</span>(<span class="dv">1</span>, <span class="dv">1</span>)], bb)</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="fu">plotSpatialData</span>(sp) <span class="sc">+</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">plotImage</span>() <span class="sc">+</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">plotShape</span>(<span class="at">col=</span><span class="st">"white"</span>, <span class="at">fill=</span><span class="cn">NA</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="mibitof_files/figure-html/unnamed-chunk-2-1.png" class="img-fluid figure-img" width="768"></p>
+<p><img src="visium_files/figure-html/unnamed-chunk-4-1.png" class="img-fluid figure-img" width="576"></p>
 </figure>
 </div>
 </div>
 </div>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>(se <span class="ot">&lt;-</span> <span class="fu">element</span>(sd, <span class="st">"table"</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>(se <span class="ot">&lt;-</span> <span class="fu">tables</span>(sd)[[<span class="dv">1</span>]])</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>class: SingleCellExperiment 
-dim: 36 3309 
+dim: 31053 6484 
 metadata(0):
 assays(1): X
-rownames(36): ASCT2 ATP5A ... XBP1 vimentin
+rownames(31053): Xkr4 Gm1992 ... Vmn2r122 CAAA01147332.1
 rowData names(0):
-colnames(3309): 9376-1 9377-1 ... 4273-0 4274-0
-colData names(10): row_num point ... Cluster batch
-reducedDimNames(3): spatial X_scanorama X_umap
+colnames(6484): AAACAAGTATCTCCCA-1 AAACACCAATAACTGC-1 ...
+  TTGTTTCCATACAACT-1-1 TTGTTTGTGTAAATTC-1
+colData names(3): in_tissue array_row array_col
+reducedDimNames(1): spatial
 mainExpName: NULL
 altExpNames(0):</code></pre>
 </div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>base<span class="sc">::</span><span class="fu">table</span>(ks <span class="ot">&lt;-</span> se<span class="sc">$</span>Cluster)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plotSpatialData</span>(sd) <span class="sc">+</span> <span class="fu">plotShape</span>(<span class="at">as=</span><span class="st">"centroid"</span>, <span class="at">col=</span><span class="st">"array_row"</span>) <span class="sc">+</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="fu">plotSpatialData</span>(sd) <span class="sc">+</span> <span class="fu">plotShape</span>(<span class="at">as=</span><span class="st">"centroid"</span>, <span class="at">col=</span><span class="st">"mt-Co1"</span>) <span class="sc">+</span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="fu">plot_layout</span>(<span class="at">nrow=</span><span class="dv">1</span>) <span class="sc">&amp;</span> <span class="fu">scale_colour_viridis_c</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># perform standard processing:</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="co"># - log-library size normalization</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="co"># - highly variable gene selection</span></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a><span class="co"># - principal component analysis</span></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a><span class="co"># - shared-nearest neighbor graph construction</span></span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a><span class="co"># - community detection using Leiden algorithm</span></span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a><span class="fu">assayNames</span>(se) <span class="ot">&lt;-</span> <span class="st">"counts"</span></span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>se <span class="ot">&lt;-</span> <span class="fu">normalizeRnaCounts.se</span>(se)</span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>se <span class="ot">&lt;-</span> <span class="fu">chooseRnaHvgs.se</span>(se, <span class="at">block=</span><span class="fu">regions</span>(se))</span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>se <span class="ot">&lt;-</span> <span class="fu">runPca.se</span>(se, <span class="at">features=</span><span class="fu">rowData</span>(se)<span class="sc">$</span>hvg)</span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>se <span class="ot">&lt;-</span> <span class="fu">clusterGraph.se</span>(se, <span class="at">method=</span><span class="st">"leiden"</span>, <span class="at">resolution=</span><span class="fl">0.5</span>)</span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(se<span class="sc">$</span>clusters)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
-  Endothelial    Epithelial    Fibroblast     Imm_other Myeloid_CD11c 
-          115           746           270           488           168 
- Myeloid_CD68     Tcell_CD4     Tcell_CD8 
-          259           799           464 </code></pre>
+   1    2    3    4    5    6    7    8    9   10 
+ 807  537  771  952  414  543  720 1038  286  416 </code></pre>
 </div>
 </div>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>is <span class="ot">&lt;-</span> <span class="fu">labelNames</span>(sd)</span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>ps <span class="ot">&lt;-</span> <span class="fu">lapply</span>(is, \(i) </span>
-<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">plotSpatialData</span>() <span class="sc">+</span> </span>
-<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>        <span class="fu">ggtitle</span>(i) <span class="sc">+</span> </span>
-<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>        <span class="fu">plotLabel</span>(<span class="at">x=</span>sd, <span class="at">i=</span>i, <span class="at">a=</span><span class="dv">2</span><span class="sc">/</span><span class="dv">3</span>,</span>
-<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>            <span class="at">c=</span><span class="st">"Cluster"</span>, <span class="at">na=</span><span class="st">"black"</span>, </span>
-<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>            <span class="at">pal=</span><span class="fu">rainbow</span>(<span class="fu">nlevels</span>(ks))))</span>
-<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a><span class="fu">wrap_plots</span>(ps, <span class="at">nrow=</span><span class="dv">1</span>, <span class="at">guides=</span><span class="st">"collect"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># add PCs as cell metadata</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>pc <span class="ot">&lt;-</span> <span class="fu">reducedDim</span>(se, <span class="st">"PCA"</span>)</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="fu">colData</span>(se) <span class="ot">&lt;-</span> <span class="fu">cbind</span>(<span class="fu">colData</span>(se), pc)</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a><span class="co"># overwrite table in copy</span></span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>sp <span class="ot">&lt;-</span> sd; sp<span class="sc">@</span>tables<span class="sc">$</span>table <span class="ot">&lt;-</span> se <span class="co"># 'table&lt;-' shuffles data; needs fix!</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># visualize PCs 1-3 spatially</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="fu">lapply</span>(<span class="fu">head</span>(<span class="fu">colnames</span>(pc), <span class="dv">3</span>), \(.) {</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">plotSpatialData</span>(sp) <span class="sc">+</span> </span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>        <span class="fu">plotShape</span>(<span class="at">as=</span><span class="st">"centroid"</span>, <span class="at">col=</span>.) <span class="sc">+</span> <span class="fu">ggtitle</span>(.) <span class="sc">+</span></span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>        <span class="fu">scale_colour_gradient2</span>(<span class="at">low=</span><span class="st">"blue"</span>, <span class="at">mid=</span><span class="st">"ivory"</span>, <span class="at">high=</span><span class="st">"red"</span>)</span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>    }) <span class="sc">|&gt;</span> </span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">wrap_plots</span>(<span class="at">nrow=</span><span class="dv">1</span>) <span class="sc">&amp;</span></span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme</span>(<span class="at">legend.position=</span><span class="st">"none"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="mibitof_files/figure-html/unnamed-chunk-4-1.png" class="img-fluid figure-img" width="960"></p>
+<p><img src="visium_files/figure-html/unnamed-chunk-8-1.png" class="img-fluid figure-img" width="1152"></p>
 </figure>
 </div>
 </div>
 </div>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>sp <span class="ot">&lt;-</span> <span class="fu">query</span>(sd, <span class="at">i=</span><span class="st">"table"</span>, <span class="fu">grepl</span>(<span class="st">"Tc"</span>, Cluster))</span>
-<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>base<span class="sc">::</span><span class="fu">table</span>(<span class="fu">table</span>(sp)<span class="sc">$</span>Cluster)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>
-Tcell_CD4 Tcell_CD8 
-      799       464 </code></pre>
-</div>
-</div>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: this is wrong!</span></span>
-<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>is <span class="ot">&lt;-</span> <span class="fu">labelNames</span>(sd)</span>
-<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>ps <span class="ot">&lt;-</span> <span class="fu">lapply</span>(is, \(i) </span>
-<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">plotSpatialData</span>() <span class="sc">+</span> </span>
-<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>        <span class="fu">ggtitle</span>(i) <span class="sc">+</span> </span>
-<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>        <span class="fu">plotLabel</span>(<span class="at">x=</span>sp, <span class="at">i=</span>i, <span class="at">a=</span><span class="dv">2</span><span class="sc">/</span><span class="dv">3</span>,</span>
-<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>            <span class="at">c=</span><span class="st">"Cluster"</span>, <span class="at">na=</span><span class="st">"black"</span>, </span>
-<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>            <span class="at">pal=</span><span class="fu">c</span>(<span class="st">"gold"</span>, <span class="st">"blue"</span>)))</span>
-<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a><span class="fu">wrap_plots</span>(ps, <span class="at">nrow=</span><span class="dv">1</span>, <span class="at">guides=</span><span class="st">"collect"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plotSpatialData</span>(sp) <span class="sc">+</span> </span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ggtitle</span>(i <span class="ot">&lt;-</span> <span class="st">"ST8059048"</span>) <span class="sc">+</span></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">plotShape</span>(i, <span class="at">as=</span><span class="st">"centroid"</span>, <span class="at">col=</span><span class="st">"clusters"</span>, <span class="at">size=</span><span class="dv">2</span><span class="sc">/</span><span class="dv">3</span>) <span class="sc">+</span> </span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">scale_colour_manual</span>(<span class="at">values=</span><span class="fu">rainbow</span>(<span class="fu">nlevels</span>(se<span class="sc">$</span>clusters))) <span class="sc">+</span></span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">guides</span>(<span class="at">col=</span><span class="fu">guide_legend</span>(<span class="at">override.aes=</span><span class="fu">list</span>(<span class="at">size=</span><span class="dv">2</span>, <span class="at">shape=</span><span class="dv">15</span>)))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
-<div>
+<div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="mibitof_files/figure-html/unnamed-chunk-6-1.png" class="img-fluid figure-img" width="960"></p>
+<p><img src="visium_files/figure-html/unnamed-chunk-9-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="384"></p>
 </figure>
 </div>
 </div>
@@ -376,59 +409,50 @@ time zone: UTC
 tzcode source: system (glibc)
 
 attached base packages:
-[1] stats     graphics  grDevices datasets  utils     methods   base     
+[1] stats4    grid      stats     graphics  grDevices datasets  utils    
+[8] methods   base     
 
 other attached packages:
-[1] SpatialData.plot_0.99.9  SpatialData.data_0.99.10 spatialdataR_0.99.45    
-[4] patchwork_1.3.2          ggplot2_4.0.3            dplyr_1.2.1             
-[7] sf_1.1-3                
+ [1] SingleCellExperiment_1.35.2 SummarizedExperiment_1.43.0
+ [3] Biobase_2.73.2              GenomicRanges_1.65.4       
+ [5] Seqinfo_1.3.2               IRanges_2.47.5             
+ [7] S4Vectors_0.51.10           MatrixGenerics_1.25.0      
+ [9] matrixStats_1.5.0           SpatialData.plot_0.99.9    
+[11] SpatialData.data_0.99.10    spatialdataR_0.99.46       
+[13] Rgraphviz_2.57.2            graph_1.91.0               
+[15] BiocGenerics_0.59.12        generics_0.1.4             
+[17] patchwork_1.3.2             scrapper_1.7.9             
+[19] ggplot2_4.0.3              
 
 loaded via a namespace (and not attached):
- [1] tidyselect_1.2.1            grumpy_0.1.1               
- [3] blob_1.3.0                  farver_2.1.2               
- [5] filelock_1.0.3              R.utils_2.13.0             
- [7] S7_0.2.2                    fastmap_1.2.0              
- [9] SingleCellExperiment_1.35.2 BiocFileCache_3.3.0        
-[11] duckdb_1.5.6.9002           digest_0.6.39              
-[13] lifecycle_1.0.5             paws.storage_0.11.0        
-[15] RSQLite_3.53.3              magrittr_2.0.5             
-[17] compiler_4.6.1              rlang_1.3.0                
-[19] tools_4.6.1                 yaml_2.3.12                
-[21] knitr_1.52                  S4Arrays_1.13.2            
-[23] htmlwidgets_1.6.4           bit_4.6.0                  
-[25] classInt_0.4-11             curl_8.0.0                 
-[27] reticulate_1.47.0           DelayedArray_0.39.8        
-[29] xml2_1.6.0                  RColorBrewer_1.1-3         
-[31] abind_1.4-8                 KernSmooth_2.23-27         
-[33] withr_3.0.3                 purrr_1.2.2                
-[35] BiocGenerics_0.59.12        R.oo_1.27.1                
-[37] grid_4.6.1                  stats4_4.6.1               
-[39] e1071_1.7-17                scales_1.4.0               
-[41] SummarizedExperiment_1.43.0 cli_3.6.6                  
-[43] rmarkdown_2.32              generics_0.1.4             
-[45] cachem_1.1.0                DBI_1.3.0                  
-[47] proxy_0.4-29                BiocManager_1.30.27        
-[49] XVector_0.53.0              matrixStats_1.5.0          
-[51] vctrs_0.7.3                 Matrix_1.7-6               
-[53] jsonlite_2.0.0              IRanges_2.47.5             
-[55] S4Vectors_0.51.10           bit64_4.8.6                
-[57] RBGL_1.89.0                 ggnewscale_0.5.2           
-[59] units_1.0-1                 glue_1.8.1                 
-[61] ZarrArray_1.1.7             gtable_0.3.6               
-[63] Rarr_2.1.44                 GenomicRanges_1.65.4       
-[65] tibble_3.3.1                pillar_1.11.1              
-[67] htmltools_0.5.9             Seqinfo_1.3.2              
-[69] graph_1.91.0                dbplyr_2.6.0               
-[71] R6_2.6.1                    httr2_1.3.0                
-[73] wk_0.9.5                    evaluate_1.0.5             
-[75] lattice_0.23-1              Biobase_2.73.2             
-[77] R.methodsS3_1.8.2           png_0.1-9                  
-[79] duckspatial_1.2.1           memoise_2.0.1              
-[81] renv_1.3.1                  paws.common_0.9.0          
-[83] class_7.3-24                Rcpp_1.1.2                 
-[85] SparseArray_1.13.4          anndataR_1.3.2             
-[87] xfun_0.61                   MatrixGenerics_1.25.0      
-[89] pkgconfig_2.0.3            </code></pre>
+ [1] DBI_1.3.0           RBGL_1.89.0         httr2_1.3.0        
+ [4] anndataR_1.3.2      rlang_1.3.0         magrittr_2.0.5     
+ [7] Rarr_2.1.44         e1071_1.7-17        compiler_4.6.1     
+[10] RSQLite_3.53.3      paws.storage_0.11.0 png_0.1-9          
+[13] vctrs_0.7.3         pkgconfig_2.0.3     wk_0.9.5           
+[16] fastmap_1.2.0       dbplyr_2.6.0        XVector_0.53.0     
+[19] labeling_0.4.3      paws.common_0.9.0   rmarkdown_2.32     
+[22] purrr_1.2.2         bit_4.6.0           xfun_0.61          
+[25] cachem_1.1.0        beachmat_2.29.3     grumpy_0.1.1       
+[28] jsonlite_2.0.0      blob_1.3.0          DelayedArray_0.39.8
+[31] uuid_1.2-2          parallel_4.6.1      R6_2.6.1           
+[34] RColorBrewer_1.1-3  reticulate_1.47.0   Rcpp_1.1.2         
+[37] knitr_1.52          R.utils_2.13.0      Matrix_1.7-6       
+[40] tidyselect_1.2.1    duckspatial_1.2.1   abind_1.4-8        
+[43] yaml_2.3.12         curl_8.0.0          lattice_0.23-1     
+[46] tibble_3.3.1        withr_3.0.3         S7_0.2.2           
+[49] evaluate_1.0.5      sf_1.1-3            units_1.0-1        
+[52] proxy_0.4-29        BiocFileCache_3.3.0 xml2_1.6.0         
+[55] pillar_1.11.1       BiocManager_1.30.27 filelock_1.0.3     
+[58] KernSmooth_2.23-27  renv_1.3.1          scales_1.4.0       
+[61] class_7.3-24        glue_1.8.1          tools_4.6.1        
+[64] ggnewscale_0.5.2    BiocNeighbors_2.7.3 duckdb_1.5.6.9002  
+[67] cli_3.6.6           S4Arrays_1.13.2     viridisLite_0.4.3  
+[70] dplyr_1.2.1         gtable_0.3.6        R.methodsS3_1.8.2  
+[73] digest_0.6.39       classInt_0.4-11     SparseArray_1.13.4 
+[76] ZarrArray_1.1.7     htmlwidgets_1.6.4   farver_2.1.2       
+[79] memoise_2.0.1       htmltools_0.5.9     R.oo_1.27.1        
+[82] lifecycle_1.0.5     bit64_4.8.6        </code></pre>
 </div>
 </div>
 </div>
