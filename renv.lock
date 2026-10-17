@@ -1456,7 +1456,7 @@
     },
     "SpatialData.plot": {
       "Package": "SpatialData.plot",
-      "Version": "0.99.10",
+      "Version": "0.99.11",
       "Source": "GitHub",
       "Title": "SpatialData visualization",
       "Depends": [
