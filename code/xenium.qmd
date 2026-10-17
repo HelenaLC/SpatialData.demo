@@ -11,7 +11,7 @@ categories:
 
 ### preamble
 
-```{r load-libs}
+```{r load-libs, message=FALSE, warning=FALSE}
 library(sf)
 library(dplyr)
 library(ggplot2)
