@@ -26,7 +26,7 @@ library(SpatialData.plot)
 
 ### analysis
 
-```{r plot-images, fig.width=9, fig.height=3.5}
+```{r plot-images, fig.width=9, fig.height=3.5, message=FALSE}
 cl <- rep(list(c(0, 1/3)), 3) # contrast limits
 ps <- lapply(imageNames(sd), \(i) 
     plotSpatialData() + ggtitle(i) +
@@ -61,7 +61,7 @@ sp <- query(sd, i="table", grepl("Tc", Cluster))
 base::table(table(sp)$Cluster)
 ```
 
-```{r plot-tcell, fig.width=10, fig.height=3.5}
+```{r plot-tcell, fig.width=10, fig.height=3.5, message=FALSE}
 is <- labelNames(sd)
 ps <- lapply(is, \(i) 
     plotSpatialData() + 
