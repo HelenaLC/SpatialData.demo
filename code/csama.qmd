@@ -317,7 +317,7 @@ Below we demonstrate two common approaches:
 
 We can instruct `reticulate` to use an existing conda/mamba environment via:
 
-```{r py-env-conda, eval=TRUE}
+```{r py-env-conda, eval=FALSE}
 # path to conda binary
 bin <- "~/software/mambaforge/bin/conda" 
 options(reticulate.conda_binary=bin)
@@ -340,7 +340,7 @@ Alternatively, we can use a local virtual environment created with `uv`
 (install via `brew install uv`) and point `reticulate` directly to the 
 corresponding Python executable:
 
-```{r py-env-uv, eval=FALSE}
+```{r py-env-uv, eval=TRUE}
 venv_path <- file.path(getwd(), ".venv/bin/python")
 use_python(venv_path, required=TRUE)
 ```
