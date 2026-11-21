@@ -56,32 +56,44 @@ decompress both archives, and stash their on-disk file paths for later.
 
 ```{r load-h5ad}
 # the name of the scRNA-seq data file (.h5ad)
-url_h5 <- file.path(
-    "https://zenodo.org/records/20178278/files",
-    "BC_scRNAseq_subset.h5ad.zip?download=1")
+url_h5 <- sprintf(
+    "https://zenodo.org/records/20178278/files/%s?download=1",
+    fnm_h5 <- "BC_scRNAseq_subset.h5ad.zip")
 
-# retrieve
-zip_h5 <- tempfile(fileext=".h5ad.zip")
-download.file(url_h5, zip_h5, quiet=TRUE)
+# retrieve:
+# - cached copy (from previous download) if available and md5sum matches
+# - from zenodo otherwise
+
+zip_h5 <- file.path(tools::R_user_dir("SpatialData.demo", "cache"), fnm_h5)
+dir.create(dirname(zip_h5), recursive=TRUE, showWarnings=FALSE)
+if (!file.exists(zip_h5) || tools::md5sum(zip_h5) != "15957f532a48d8d3f321ddb569e7e9a4" ) {
+    download.file(url_h5, zip_h5, quiet=TRUE, mode="wb")
+}
 
 # decompress
-fnm_h5 <- unzip(zip_h5, exdir=dirname(zip_h5))
+fnm_h5 <- unzip(zip_h5, exdir=tempdir())
 h5 <- grep("h5ad$", fnm_h5, value=TRUE)
 cat(basename(h5))
 ```
 
 ```{r load-zarr}
 # SpatialData store (.zarr)
-url_zs <- file.path(
-    "https://zenodo.org/records/20180722/files",
-    "BC_10x_xenium_sdata.zarr.zip?download=1")
+url_zs <- sprintf(
+    "https://zenodo.org/records/20180722/files/%s?download=1",
+    fnm_zs <- "BC_10x_xenium_sdata.zarr.zip")
 
-# retrieve
-zip_zs <- tempfile(fileext=".zarr.zip")
-download.file(url_zs, zip_zs, quiet=TRUE)
+# retrieve:
+# - cached copy (from previous download) if available and md5sum matches
+# - from zenodo otherwise
+
+zip_zs <- file.path(tools::R_user_dir("SpatialData.demo", "cache"), fnm_zs)
+dir.create(dirname(zip_zs), recursive=TRUE, showWarnings=FALSE)
+if (!file.exists(zip_zs) || tools::md5sum(zip_zs) != "a5ca435ab9ddbbd4ed6ea701e1389ba9" ) {
+    download.file(url_zs, zip_zs, quiet=TRUE, mode="wb")
+}
 
 # decompress
-fnm_zs <- unzip(zip_zs, exdir=dirname(zip_zs))
+fnm_zs <- unzip(zip_zs, exdir=tempdir())
 zs <- grep("zarr$", dirname(fnm_zs), value=TRUE)
 cat(basename(zs))
 ```
