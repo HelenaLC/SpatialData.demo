@@ -220,12 +220,12 @@ bb <- list(
     ymin=42e3, ymax=45e3)
 sq <- crop(sd, bb)
 # visualize HE & IF side-by-side
-plotSpatialData() + 
-    plotImage(sq, 1) +
-    plotShape(sq, fill=NA, col="black", linewidth=1/5) +
-plotSpatialData() + 
-    plotImage(sq, 2, ch=chs, c=pal[chs]) +
-    plotShape(sq, fill=NA, col="white", linewidth=1/5)
+plotSpatialData(sq) + 
+    plotImage(1) +
+    plotShape(fill=NA, col="black", linewidth=1/5) +
+plotSpatialData(sq) + 
+    plotImage(2, ch=chs, c=pal[chs]) +
+    plotShape(fill=NA, col="white", linewidth=1/5)
 ```
 
 We can also go a step further, visualizing both cell nuclei (in gold) 
@@ -238,10 +238,10 @@ bb <- list(
     ymin=43e3, ymax=44e3)
 sq <- crop(sd, bb)
 # visualize IF, membrane & nuclei boundaries
-plotSpatialData() + 
-    plotImage(sq, 2, ch=chs, c=pal[chs]) +
-    plotShape(sq, 1, fill=NA, col="grey", linewidth=1/3) +
-    plotShape(sq, 2, fill=NA, col="gold", linewidth=1/3)
+plotSpatialData(sq) + 
+    plotImage(2, ch=chs, c=pal[chs]) +
+    plotShape(1, fill=NA, col="grey", linewidth=1/3) +
+    plotShape(2, fill=NA, col="gold", linewidth=1/3)
 ```
 
 #### Transcripts 
@@ -270,11 +270,11 @@ sq <- crop(sd, bb)
 point(sq) <- mutate(point(sq), overlaps_nucleus=as.logical(overlaps_nucleus))
 
 # visualiye IF, boundaries & transcripts
-plotSpatialData() + 
-    plotImage(sq, 2, ch=chs, c=pal[chs]) +
-    plotShape(sq, 1, fill=NA, col="grey", linewidth=1/3) +
-    plotShape(sq, 2, fill=NA, col="gold", linewidth=1/3) +
-    plotPoint(sq, n=4e3, col="overlaps_nucleus", size=0) +
+plotSpatialData(sq) + 
+    plotImage(2, ch=chs, c=pal[chs]) +
+    plotShape(1, fill=NA, col="grey", linewidth=1/3) +
+    plotShape(2, fill=NA, col="gold", linewidth=1/3) +
+    plotPoint(n=4e3, col="overlaps_nucleus", size=0) +
     guides(col=guide_legend(override.aes=list(size=2))) +
     scale_color_manual(values=c("grey", "red"))
 ```
@@ -285,9 +285,9 @@ Zooming back out to a larger scale, let's look at a pretty plot:
 #| code-fold: true
 bb <- list(xmin=16e3, xmax=18e3, ymin=45e3, ymax=46e3)
 sq <- crop(sd[c("images", "points"), list(2, 1)], bb)
-plotSpatialData() + 
-    plotImage(sq, ch="DAPI", c="purple") +
-    plotPoint(sq, n=8e3, col="ivory", size=0) +
+plotSpatialData(sq) + 
+    plotImage(ch="DAPI", c="purple") +
+    plotPoint(n=8e3, col="ivory", size=0) +
     theme_void() + theme(legend.position="none")
 ```
 
@@ -585,22 +585,22 @@ pal <- py$col_celltype
 ```{r segtraq-plot-r, message=FALSE, fig.width=12, fig.height=8}
 #| code-fold: true
 # base plot wrapper
-.p <- \(x, y=FALSE) {
-    plotSpatialData() + ggtitle(x) +
+.p <- \(sd, x, y=FALSE) {
+    plotSpatialData(sd) + ggtitle(x) +
     theme(axis.title=element_blank()) +
     if (y) scale_fill_viridis_c(NULL, na.value="#808080")
 }
 
-p1 <- .p("H&E") + plotImage(sd)
-p2 <- .p("DAPI") + plotImage(sd, 2, ch="DAPI", c="yellow")
+p1 <- .p(sd, "H&E") + plotImage()
+p2 <- .p(sd, "DAPI") + plotImage(2, ch="DAPI", c="yellow")
 
-p3 <- .p("cell type") + 
-    plotShape(sd, col=NA, fill="transferred_cell_type") +
+p3 <- .p(sd, "cell type") + 
+    plotShape(col=NA, fill="transferred_cell_type") +
     scale_fill_manual(values=pal, na.value="#808080")
 
-p4 <- .p("elongation", TRUE) + plotShape(sd, col=NA, fill="elongation")
-p5 <- .p("# transcripts", TRUE) + plotShape(sd, col=NA, fill="transcript_count")
-p6 <- .p("contamination", TRUE) + plotShape(sd, col=NA, fill="negative_marker_contamination_counts")
+p4 <- .p(sd, "elongation", TRUE) + plotShape(col=NA, fill="elongation")
+p5 <- .p(sd, "# transcripts", TRUE) + plotShape(col=NA, fill="transcript_count")
+p6 <- .p(sd, "contamination", TRUE) + plotShape(col=NA, fill="negative_marker_contamination_counts")
 
 ps <- list(p1, p2, p3, p4, p5, p6)
 
@@ -738,10 +738,10 @@ bb <- list(
 sq <- crop(sd, bb)
 
 # visualize MS4A1 transcripts over labeled cells
-plotSpatialData() +
-    plotShape(sq, col=NA, fill="transferred_cell_type", alpha=0.8) +
+plotSpatialData(sq) +
+    plotShape(col=NA, fill="transferred_cell_type", alpha=0.8) +
     scale_fill_manual(values=pal, na.value="#808080") +
-    plotPoint(sq, key="MS4A1", size=0.4) +
+    plotPoint(key="MS4A1", size=0.4) +
     ggtitle("MS4A1 transcripts in T/B cells")
 ```
 
@@ -840,8 +840,10 @@ se$ex <- is.na(cpa) | (cpa < med-2*mad)
 
 ```{r plt-fil, message=FALSE}
 #| code-fold: true
-plotSpatialData() + 
-    plotShape(`table<-`(sd, value=se), col=NA, fill="ex") + 
+sq <- sd
+table(sq) <- se
+plotSpatialData(sq) + 
+    plotShape(col=NA, fill="ex") + 
     scale_fill_manual("exclude", values=c("grey", "red"))
 ```
 
@@ -872,8 +874,8 @@ Let's visualize the resulting cluster assignments spatially; from this, we can
 observe that malignant regions are mostly made up of a single (large) cluster:
 
 ```{r plt-xy-clu}
-plotSpatialData() + 
-    plotShape(sd, col=NA, fill="clusters") +
+plotSpatialData(sd) + 
+    plotShape(col=NA, fill="clusters") +
     scale_fill_manual(values=hcl.colors(nk, "Spectral")) 
 ```
 
@@ -1044,9 +1046,9 @@ shape(sd, "roi") <- roi
 
 ```{r sosta-plt, message=FALSE}
 #| code-fold: true
-plotSpatialData() + 
-    plotShape(sd, col=NA, fill="clusters") + 
-    plotShape(sd, "roi", fill=NA, linewidth=1) +
+plotSpatialData(sd) + 
+    plotShape(col=NA, fill="clusters") + 
+    plotShape("roi", fill=NA, linewidth=1) +
     scale_fill_manual(values=hcl.colors(nk, "Spectral")) 
 ```
 
@@ -1145,8 +1147,8 @@ apply(pc$rotation[, 1:3], 2, \(.) {
 })
 
 # visualize exemplary feature spatially
-plotSpatialData() + 
-    plotShape(sd, col=NA, fill="XBP1", assay="logcounts") +
+plotSpatialData(sd) + 
+    plotShape(col=NA, fill="XBP1", assay="logcounts") +
     scale_fill_gradientn(colors=rev(hcl.colors(9, "Roma")))
 ```
 
