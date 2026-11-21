@@ -45,7 +45,7 @@ to avoid getting stuck in a forever wait, is large enough (the default is 60 sec
 
 ```{r set-timeout}
 # Zenodo can be a bit slow and the dataset is large so we increase the timeout
-old_timeout <- options(timeout=900)
+old_timeout <- options(timeout=2500)
 on.exit(options(old_timeout))
 ```
 
@@ -57,7 +57,7 @@ decompress both archives, and stash their on-disk file paths for later.
 ```{r load-h5ad}
 # the name of the scRNA-seq data file (.h5ad)
 url_h5 <- sprintf(
-    "https://zenodo.org/records/20178278/files/%s?download=1",
+    "https://zenodo.org/records/20180722/files/%s?download=1",
     fnm_h5 <- "BC_scRNAseq_subset.h5ad.zip")
 
 # retrieve:
