@@ -5185,10 +5185,9 @@
       "RemoteHost": "api.github.com",
       "RemoteRepo": "spatialdataR",
       "RemoteUsername": "HelenaLC",
-      "RemotePkgRef": "HelenaLC/spatialdataR#292",
-      "RemotePull": "292",
-      "RemoteSha": "8721758b96d456be5a80a2f2269e7e1b5a1a6078",
-      "GitHubPull": "292",
+      "RemotePkgRef": "HelenaLC/spatialdataR@292-rebased",
+      "RemoteRef": "292-rebased",
+      "RemoteSha": "386224c8db7e7f65028958fa01e65f670c9989af",
       "NeedsCompilation": "no",
       "Author": "Helena L. Crowell [aut, cre] (ORCID: <https://orcid.org/0000-0002-4801-1767>), Artür Manukyan [aut] (ORCID: <https://orcid.org/0000-0002-0441-9517>), Hugo Gruson [aut] (ORCID: <https://orcid.org/0000-0002-4094-1476>), Vince Carey [aut] (ORCID: <https://orcid.org/0000-0003-4046-0063>)",
       "Maintainer": "Helena L. Crowell <helena@crowell.eu>"
