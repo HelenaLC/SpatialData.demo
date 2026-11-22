@@ -9,7 +9,6 @@ project:
     - "index.qmd"
     - "code/*.qmd"
     - "!code/4d.qmd"
-    - "!code/mibitof.qmd"
     - "!code/visiumhd.qmd"
     - "!code/xenium.qmd"
   type: website

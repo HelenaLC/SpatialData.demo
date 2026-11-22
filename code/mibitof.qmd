@@ -4,11 +4,13 @@ author:
   - name: Helena L Crowell
     affiliation: CNAG, Barcelona, Spain
 date: last-modified
+categories:
+  - spatial proteomics
 ---
 
 ### preamble
 
-```{r load-libs}
+```{r load-libs, message=FALSE, warning=FALSE}
 library(sf)
 library(dplyr)
 library(ggplot2)
@@ -24,24 +26,26 @@ library(SpatialData.plot)
 
 ### analysis
 
-```{r fig.width=9, fig.height=3.5}
+```{r plot-images, fig.width=9, fig.height=3.5, message=FALSE}
 cl <- rep(list(c(0, 1/3)), 3) # contrast limits
-ps <- lapply(imageNames(sd), \(i) plotSpatialData() + plotImage(x=sd, i=i, cl=cl) + ggtitle(i))
+ps <- lapply(imageNames(sd), \(i) 
+    plotSpatialData() + ggtitle(i) +
+        plotImage(x=sd, i=i, cl=cl))
 wrap_plots(ps, nrow=1) & theme(legend.position="none")
 ```
 
-```{r fig.width=8, fig.height=3, message=FALSE}
+```{r plot-crop, fig.width=8, fig.height=3, message=FALSE}
 bb <- list(xmin=0, xmax=800, ymin=200, ymax=500)
 (sp <- crop(sd, bb, j="point23"))
 plotSpatialData() + plotImage(x=sp, cl=cl)
 ```
 
-```{r}
+```{r show-table}
 (se <- element(sd, "table"))
 base::table(ks <- se$Cluster)
 ```
 
-```{r fig.width=10, fig.height=3.5}
+```{r plot-cells, fig.width=10, fig.height=3.5, message=FALSE}
 is <- labelNames(sd)
 ps <- lapply(is, \(i) 
     plotSpatialData() + 
@@ -52,13 +56,12 @@ ps <- lapply(is, \(i)
 wrap_plots(ps, nrow=1, guides="collect")
 ```
 
-```{r}
+```{r query-tcell}
 sp <- query(sd, i="table", grepl("Tc", Cluster))
 base::table(table(sp)$Cluster)
 ```
 
-```{r fig.width=10, fig.height=3.5}
-# TODO: this is wrong!
+```{r plot-tcell, fig.width=10, fig.height=3.5, message=FALSE}
 is <- labelNames(sd)
 ps <- lapply(is, \(i) 
     plotSpatialData() + 
