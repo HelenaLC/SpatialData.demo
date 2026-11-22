@@ -222,10 +222,10 @@ sq <- crop(sd, bb)
 # visualize HE & IF side-by-side
 plotSpatialData(sq) + 
     plotImage(1) +
-    plotShape(fill=NA, col="black", linewidth=1/5) +
+    plotShape(col="black", linewidth=1/5) +
 plotSpatialData(sq) + 
     plotImage(2, ch=chs, c=pal[chs]) +
-    plotShape(fill=NA, col="white", linewidth=1/5)
+    plotShape(col="white", linewidth=1/5)
 ```
 
 We can also go a step further, visualizing both cell nuclei (in gold) 
@@ -240,8 +240,8 @@ sq <- crop(sd, bb)
 # visualize IF, membrane & nuclei boundaries
 plotSpatialData(sq) + 
     plotImage(2, ch=chs, c=pal[chs]) +
-    plotShape(1, fill=NA, col="grey", linewidth=1/3) +
-    plotShape(2, fill=NA, col="gold", linewidth=1/3)
+    plotShape(1, col="grey", linewidth=1/3) +
+    plotShape(2, col="gold", linewidth=1/3)
 ```
 
 #### Transcripts 
@@ -269,11 +269,11 @@ sq <- crop(sd, bb)
 # convert to logical for discrete coloring
 point(sq) <- mutate(point(sq), overlaps_nucleus=as.logical(overlaps_nucleus))
 
-# visualiye IF, boundaries & transcripts
+# visualise IF, boundaries & transcripts
 plotSpatialData(sq) + 
     plotImage(2, ch=chs, c=pal[chs]) +
-    plotShape(1, fill=NA, col="grey", linewidth=1/3) +
-    plotShape(2, fill=NA, col="gold", linewidth=1/3) +
+    plotShape(1, col="grey", linewidth=1/3) +
+    plotShape(2, col="gold", linewidth=1/3) +
     plotPoint(n=4e3, col="overlaps_nucleus", size=0) +
     guides(col=guide_legend(override.aes=list(size=2))) +
     scale_color_manual(values=c("grey", "red"))
@@ -587,20 +587,18 @@ pal <- py$col_celltype
 # base plot wrapper
 .p <- \(sd, x, y=FALSE) {
     plotSpatialData(sd) + ggtitle(x) +
-    theme(axis.title=element_blank()) +
-    if (y) scale_fill_viridis_c(NULL, na.value="#808080")
+    theme(axis.title=element_blank())
 }
 
 p1 <- .p(sd, "H&E") + plotImage()
 p2 <- .p(sd, "DAPI") + plotImage(2, ch="DAPI", c="yellow")
 
 p3 <- .p(sd, "cell type") + 
-    plotShape(col=NA, fill="transferred_cell_type") +
-    scale_fill_manual(values=pal, na.value="#808080")
+    plotShape(fill="transferred_cell_type", as = "solid")
 
-p4 <- .p(sd, "elongation", TRUE) + plotShape(col=NA, fill="elongation")
-p5 <- .p(sd, "# transcripts", TRUE) + plotShape(col=NA, fill="transcript_count")
-p6 <- .p(sd, "contamination", TRUE) + plotShape(col=NA, fill="negative_marker_contamination_counts")
+p4 <- .p(sd, "elongation") + plotShape(fill="elongation", as = "solid")
+p5 <- .p(sd, "# transcripts") + plotShape(fill="transcript_count", as = "solid")
+p6 <- .p(sd, "contamination") + plotShape(fill="negative_marker_contamination_counts", as = "solid")
 
 ps <- list(p1, p2, p3, p4, p5, p6)
 
@@ -739,8 +737,7 @@ sq <- crop(sd, bb)
 
 # visualize MS4A1 transcripts over labeled cells
 plotSpatialData(sq) +
-    plotShape(col=NA, fill="transferred_cell_type", alpha=0.8) +
-    scale_fill_manual(values=pal, na.value="#808080") +
+    plotShape(fill="transferred_cell_type", as = "solid", alpha=0.8) +
     plotPoint(key="MS4A1", size=0.4) +
     ggtitle("MS4A1 transcripts in T/B cells")
 ```
@@ -843,7 +840,7 @@ se$ex <- is.na(cpa) | (cpa < med-2*mad)
 sq <- sd
 table(sq) <- se
 plotSpatialData(sq) + 
-    plotShape(col=NA, fill="ex") + 
+    plotShape(fill="ex", as = "solid") + 
     scale_fill_manual("exclude", values=c("grey", "red"))
 ```
 
@@ -875,7 +872,7 @@ observe that malignant regions are mostly made up of a single (large) cluster:
 
 ```{r plt-xy-clu}
 plotSpatialData(sd) + 
-    plotShape(col=NA, fill="clusters") +
+    plotShape(fill="clusters", as = "solid") +
     scale_fill_manual(values=hcl.colors(nk, "Spectral")) 
 ```
 
@@ -1047,8 +1044,8 @@ shape(sd, "roi") <- roi
 ```{r sosta-plt, message=FALSE}
 #| code-fold: true
 plotSpatialData(sd) + 
-    plotShape(col=NA, fill="clusters") + 
-    plotShape("roi", fill=NA, linewidth=1) +
+    plotShape(fill="clusters", as = "solid") + 
+    plotShape("roi", linewidth=1) +
     scale_fill_manual(values=hcl.colors(nk, "Spectral")) 
 ```
 
@@ -1148,7 +1145,7 @@ apply(pc$rotation[, 1:3], 2, \(.) {
 
 # visualize exemplary feature spatially
 plotSpatialData(sd) + 
-    plotShape(col=NA, fill="XBP1", assay="logcounts") +
+    plotShape(fill="XBP1", assay="logcounts", as = "solid") +
     scale_fill_gradientn(colors=rev(hcl.colors(9, "Roma")))
 ```
 
