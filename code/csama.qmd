@@ -57,7 +57,7 @@ decompress both archives, and stash their on-disk file paths for later.
 ```{r load-h5ad}
 # the name of the scRNA-seq data file (.h5ad)
 url_h5 <- sprintf(
-    "https://zenodo.org/records/20180722/files/%s?download=1",
+    "https://huber.buckets.embl.de/spatialdata-demo/%s",
     fnm_h5 <- "BC_scRNAseq_subset.h5ad.zip")
 
 # retrieve:
@@ -79,7 +79,7 @@ cat(basename(h5))
 ```{r load-zarr}
 # SpatialData store (.zarr)
 url_zs <- sprintf(
-    "https://zenodo.org/records/20180722/files/%s?download=1",
+    "https://huber.buckets.embl.de/spatialdata-demo/%s",
     fnm_zs <- "BC_10x_xenium_sdata.zarr.zip")
 
 # retrieve:
