@@ -27,7 +27,7 @@ duckdb::dbDisconnect(conn)
 ```
 
 ```{r load-data}
-zs <- "https://uk1s3.embassy.ebi.ac.uk/idr/zarr/v0.4/idr0052A/5514375.zarr"
+zs <- "https://livingobjects.ebi.ac.uk/idr/zarr/v0.4/idr0052A/5514375.zarr"
 lb <- file.path(zs, "labels")
 (i <- readImage(zs) |> addCT(name="global"))
 
