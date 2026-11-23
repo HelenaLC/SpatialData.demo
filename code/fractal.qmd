@@ -3,8 +3,10 @@ title: "Fractal"
 author:
   - name: Helena L Crowell
     affiliation: CNAG, Barcelona, Spain
+    orcid: 0000-0002-4801-1767
   - name: Charlotte Soneson
     affiliation: FMI, Basel, Switzerland
+    orcid: 0000-0003-3833-2169
 date: last-modified
 ---
 

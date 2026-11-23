@@ -3,6 +3,7 @@ title: Visium
 author:
   - name: Helena L Crowell
     affiliation: CNAG, Barcelona, Spain
+    orcid: 0000-0002-4801-1767
 date: last-modified
 categories:
   - spatial transcriptomics
